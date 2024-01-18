@@ -3,9 +3,9 @@
   <img src="./imagens/ISHLOGO.png" alt="Logo do Purple Team" width="300" height="300">
 </p>
 
-# CTI Purple Team - Movimentação Lateral Através do Invoke-SMBExec
+# CTI Purple Team - Movimentação Lateral Através do Sequestro de Sessão de Serviço RDP
 
-Na pesquisa desta semana, iremos explorar as características de uma ferramenta amplamente utilizada por adversários, e já identificada pela equipe de *DFIR* da ISH Tecnologia em respostas a incidentes, o ***Invoke-SMBExec***.
+Nesta pesquisa iremos abordar a tática de movimentação lateral, usando o método de sequestro de sessão de serviço remoto, realizando o sequestro RDP.
 
 A ideia por trás do SMBExec não é nova, pois o seu vetor de ataque é amplamente conhecido e utilizado por diversos adversários, com o propósito de alcançar a movimentação lateral através da infraestrutura das vítimas. Estamos falando da exploração do protocolo SMB, que se não tiver bem configurada, dará capacidade aos adversários de se mover através da infraestrutura.
 
