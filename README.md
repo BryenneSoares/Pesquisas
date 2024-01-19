@@ -5,7 +5,7 @@
 
 # CTI Purple Team - Movimentação Lateral Através do Sequestro de Sessão de Serviço RDP
 
-Nesta pesquisa iremos abordar a tática de movimentação lateral, usando o método de sequestro de sessão de serviço remoto, realizando o sequestro RDP.
+Nesta pesquisa iremos abordar a tática de movimentação lateral, usando a técnica de sequestro de sessão de serviço remoto, realizando o sequestro RDP, que envolve o roubo da sessão remota de um usuário legítimo.
 
 A ideia por trás do SMBExec não é nova, pois o seu vetor de ataque é amplamente conhecido e utilizado por diversos adversários, com o propósito de alcançar a movimentação lateral através da infraestrutura das vítimas. Estamos falando da exploração do protocolo SMB, que se não tiver bem configurada, dará capacidade aos adversários de se mover através da infraestrutura.
 
