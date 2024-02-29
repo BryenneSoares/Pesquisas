@@ -21,7 +21,7 @@ Ao clicar duas vezes em um arquivo ***.txt***, ele é aberto com um ***notepad.e
 
 As seleções de associação de arquivos são armazenados no Registro do Windows e estão listadas em **HKEY_CLASSES_ROOT.[extention]**, no caso dessa pesquisa será listado em **HKEY_CLASSES_ROOT.txt** e, podem ser editados por administradores ou programas que tenham acesso ao Registro ou por administradores usando o utilitário associado, desde que tenham elevação de privilégio de administrador. 
 
-## Emulação de Ameaça - Criação de Arquivo Malicioso Através do ps.exe
+## Emulação de Ameaça - Criação de Arquivo Malicioso Através do Powershell
 
 Há dois locais de registro que definem os manipuladores de extensão, que são mostrados a seguir, e são classificados como: *Global* e *Local*.
 
