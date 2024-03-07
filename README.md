@@ -5,7 +5,7 @@
 
 # CTI Purple Team - Execução Acionada por Evento: Alterar Associação de Arquivo Padrão T1546.001
 
-Nesta pesquisa, iremos abordar a tática [TA0003](https://attack.mitre.org/tactics/TA0003/) (Persistência), dando ênfase a sub-técnica [T1546.012](https://attack.mitre.org/techniques/T1546/001/) (Event Triggered Execution: Change Default File Association).
+Nesta pesquisa, iremos abordar a tática [TA0003](https://attack.mitre.org/tactics/TA0003/) (Persistência), dando ênfase a sub-técnica [T1546.001](https://attack.mitre.org/techniques/T1546/001/) (Event Triggered Execution: Change Default File Association).
 
 A tática de persisência é uma das maneiras pelas quais os invasores podem explorar eventos específicos do sistema para executar código malicioso de forma persistente. Neste tipo de ataque, os invasores modificam as configurações do sistema que controlam como os arquivos serão abertos por padrão quando um usuário interage com eles. Isso pode ser explorado por meio de diversas técnicas, incluindo, manipulação de resgistros do sistema ou exploração de vulnerabilidades em aplicativos que lidam com a abertura de arquivos.
 
