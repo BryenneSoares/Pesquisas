@@ -99,12 +99,29 @@ Após a modificação a chave de registro se encontrará da mesma maneira que a 
   Figura 7: Manipulador de registro modificado 
 </p>
 
+**Info:** Como mencionado no inicio do documento, é possível fazer a modificação do manipulador de registro pelo cmd, com privilégio de administrador, utilizando o comando a seguir. Após, rodar o segundo comando para consultar o valor da chave de registro modificado. Abaixo é possível vizualizar os comandos executados com êxito.
+
+```zsh
+reg add HKEY_CLASSES_ROOT\txtfile\shell\open\command /ve /t REG_EXPAND_SZ /d shell.cmd /f
+  
+```
+```zsh
+reg query HKEY_CLASSES_ROOT\txtfile\shell\open\command
+  
+```
+
+<p align="center">
+  <img src="imagens/modificar-chave-de-registro-cmd.png">
+  <br>
+  Figura 8: Manipulador de registro modificado pelo cmd e consultado sua modificação
+</p>
+
 A seguir na máquina do atacante, iremos rodar dois comandos no terminal, um para servir para baixar o arquivo aberto pelo usuário e outro para escutar a porta selecionada para sequestrar a sessão do sistema da vítima:
 
 <p align="center">
   <img src="imagens/comando-para-baixar-arquivo.png">
   <br>
-  Figura 8: Comando servindo para baixar arquivo executado
+  Figura 9: Comando servindo para baixar arquivo executado
 </p>
 
 O comando acima, serve o arquivo para outra pessoa baixar os arquivos .txt abertos pela vítima. E o comando abaixo utilizaremos o [*NetCat*](https://www.devmedia.com.br/netcat-o-canivete-suico-tcp-ip-revista-infra-magazine-8/26299#:~:text=O%20Netcat%2C%20criado%20em%202004,conectividade%2C%20seguran%C3%A7a%2C%20entre%20outros.) como Listener, ao ser iniciado irá ouvir qualquer conexão realizada na porta **8081/TCP**. 
@@ -112,7 +129,7 @@ O comando acima, serve o arquivo para outra pessoa baixar os arquivos .txt abert
 <p align="center">
   <img src="imagens/comando-escustar-maquina-alvo.png">
   <br>
-  Figura 9: Comando NetCat servindo como listener
+  Figura 10: Comando NetCat servindo como listener
 </p>
 
 Após realizar todos esses passos e o processo de persisência configurado na máquina alvo com seucesso, quando o usuário alvo abrir qualquer arquivo de texto, o arquivo malicioso será executado simultâneamente, a comunicação será estabelecida com o *listener* na porta **8081/TCP**, mencionada acima. Abaixo é possível visualizar a execução.
@@ -120,7 +137,7 @@ Após realizar todos esses passos e o processo de persisência configurado na m�
 <p align="center">
   <img src="imagens/gif-emulação.gif">
   <br>
-  Figura 10: Obtendo shell reverso com cmd
+  Figura 11: Obtendo shell reverso com cmd
 </p>
 
 ## Engenharia de Detecção
