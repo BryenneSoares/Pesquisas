@@ -24,8 +24,6 @@ Neste contexto, exploraremos os conceitos por trás da execução acionada por e
 
 **Info:** É possível executar este processo de duas maneiras: por meio da interface gráfica ou utilizando CLI como prompt de comandos (CMD).
 
-Ao manipular essas chaves do registro, os invasores podem garantir que seu código malicioso seja executado sempre que o usuário iniciar uma sessão no sistema, permitindo a persistência do ataque. Para prevenir esse tipo de ataque, é importante adotar práticas de segurança robustas, os usuários devem monitorar regularmente as chaves de registro em HKCU em busca de alterações não autorizadas, manter o sistema e os aplicativos atualizados, restringir privilégios de usuário para minimizar o impacto de possíveis ataques e educar os usuários sobre práticas seguras de computação, como não abrir arquivos de fontes desconhecidas.
-
 Uma vez que essa associação de arquivo padrão é alterada, o código malicioso pode ser executado repetidamente sempre que o usuário tentar abrir um arquivo do tipo afetado, permitindo que o invasor mantenha acesso persistente ao sistema mesmo após reinicializações ou reinstalações do sistema operacional.
 
 Por exemplo, um invasor pode modificar a associação de arquivo padrão para um tipo específico de arquivo, como documentos do Microsoft Word (.docx), para que, sempre que um usuário tente abrir esse tipo de arquivo, o sistema execute automaticamente um arquivo malicioso em vez de abrir o aplicativo correspondente. 
@@ -133,6 +131,7 @@ Após realizar todos esses passos e o processo de persisência configurado na m�
 
 # Conclusão
 
+Ao manipular essas chaves do registro, os invasores podem garantir que seu código malicioso seja executado sempre que o usuário iniciar uma sessão no sistema, permitindo a persistência do ataque. Para prevenir esse tipo de ataque, é importante adotar práticas de segurança robustas, os usuários devem monitorar regularmente as chaves de registro em HKCU em busca de alterações não autorizadas, manter o sistema e os aplicativos atualizados, restringir privilégios de usuário para minimizar o impacto de possíveis ataques e educar os usuários sobre práticas seguras de computação, como não abrir arquivos de fontes desconhecidas.
 Esperamos que você que leu ou assistiu o Webinar, possa ter compreendido a inteligência que trouxemos nesta pesquisa. Qualquer dúvida, é só nos contactar.
 
 ## Link do Webinar
