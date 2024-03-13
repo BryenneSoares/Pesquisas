@@ -99,7 +99,7 @@ Após a modificação a chave de registro se encontrará da mesma maneira que a 
   Figura 7: Manipulador de registro modificado 
 </p>
 
-**Info:** Como mencionado no inicio do documento, é possível fazer a modificação do manipulador de registro pelo cmd, com privilégio de administrador, utilizando o comando a seguir. Após, rodar o segundo comando para consultar o valor da chave de registro modificado. Abaixo é possível vizualizar os comandos executados com êxito.
+**Info:** Como mencionado no inicio do documento, é possível fazer a modificação do manipulador de registro pelo cmd, com privilégio de administrador, utilizando o comando a seguir. Após realizar a modficação, rodar o segundo comando para consultar o valor da chave de registro modificado. Abaixo é possível vizualizar os comandos executados com êxito.
 
 ```zsh
 reg add HKEY_CLASSES_ROOT\txtfile\shell\open\command /ve /t REG_EXPAND_SZ /d shell.cmd /f
