@@ -43,7 +43,7 @@ Quando um arquivo é aberto, o sistema operacional verifica os registros locais 
 <p align="center">
   <img src="imagens/chave-de-registro-user.png">
   <br>
-  Figura 2: Registro Local sem aplicação padrão designada para abrir aquivos .txt
+  Figura 3: Registro Local sem aplicação padrão designada para abrir aquivos .txt
 </p>
 
 Acima, temos o exemplo de que a chave de registro local não possui nenhum aplicativo padrão designado para abrir arquivos de texto, confirmando a infromação citada anteriormente. 
@@ -60,7 +60,7 @@ Ao abir um arquivo ***`.txt`***, o windows por padrão sabe que para abrir esse 
 <p align="center">
   <img src="imagens/Editor-de-registro-HKEY.png">
   <br>
-  Figura 3: Editor de registro HKEY_CLASSES_ROOT\txtfile\shell\open\command
+  Figura 4: Editor de registro HKEY_CLASSES_ROOT\txtfile\shell\open\command
 </p>
 
 Supomos que o usuário alvo possua uma arquivo chamado ***`test.txt`*** em sua área de trabalho, contendo o conteúdo do arquivo ilustrado abaixo:
@@ -68,7 +68,7 @@ Supomos que o usuário alvo possua uma arquivo chamado ***`test.txt`*** em sua �
 <p align="center">
   <img src="imagens/arquivo-vitima.png">
   <br>
-  Figura 4: Arquivo de teste para emulação
+  Figura 5: Arquivo de teste para emulação
 </p>
 
 Iremos criar agora um arquivo malicioso que será executado quando o usuário alvo tentar abrir o arquivo chamado test.txt, sendo que com a execução desta têcnica pode ser qualquer arquivo aleatório, apenas seguindo o critério de extenção .txt usado como exemplo nesta pesquisa.
@@ -88,7 +88,7 @@ A partir disso, podemos sequestrar a extensão do arquivo .txt, modificando os d
 <p align="center">
   <img src="imagens/mod.registro.png">
   <br>
-  Figura 5: Manipulador de registro sendo modificado
+  Figura 6: Manipulador de registro sendo modificado
 </p>
 
 Após a modificação a chave de registro se encontrará da mesma maneira que a imagem a seguir:
@@ -96,7 +96,7 @@ Após a modificação a chave de registro se encontrará da mesma maneira que a 
 <p align="center">
   <img src="imagens/modificado.png">
   <br>
-  Figura 6: Manipulador de registro modificado 
+  Figura 7: Manipulador de registro modificado 
 </p>
 
 A seguir na máquina do atacante, iremos rodar dois comandos no terminal, um para servir para baixar o arquivo aberto pelo usuário e outro para escutar a porta selecionada para sequestrar a sessão do sistema da vítima:
@@ -104,7 +104,7 @@ A seguir na máquina do atacante, iremos rodar dois comandos no terminal, um par
 <p align="center">
   <img src="imagens/comando-para-baixar-arquivo.png">
   <br>
-  Figura 7: Comando servindo para baixar arquivo executado
+  Figura 8: Comando servindo para baixar arquivo executado
 </p>
 
 O comando acima, serve o arquivo para outra pessoa baixar os arquivos .txt abertos pela vítima. E o comando abaixo utilizaremos o [*NetCat*](https://www.devmedia.com.br/netcat-o-canivete-suico-tcp-ip-revista-infra-magazine-8/26299#:~:text=O%20Netcat%2C%20criado%20em%202004,conectividade%2C%20seguran%C3%A7a%2C%20entre%20outros.) como Listener, ao ser iniciado irá ouvir qualquer conexão realizada na porta **8081/TCP**. 
@@ -112,7 +112,7 @@ O comando acima, serve o arquivo para outra pessoa baixar os arquivos .txt abert
 <p align="center">
   <img src="imagens/comando-escustar-maquina-alvo.png">
   <br>
-  Figura 8: Comando NetCat servindo como listener
+  Figura 9: Comando NetCat servindo como listener
 </p>
 
 Após realizar todos esses passos e o processo de persisência configurado na máquina alvo com seucesso, quando o usuário alvo abrir qualquer arquivo de texto, o arquivo malicioso será executado simultâneamente, a comunicação será estabelecida com o *listener* na porta **8081/TCP**, mencionada acima. Abaixo é possível visualizar a execução.
@@ -120,7 +120,7 @@ Após realizar todos esses passos e o processo de persisência configurado na m�
 <p align="center">
   <img src="imagens/gif-emulação.gif">
   <br>
-  Figura 9: Obtendo shell reverso com cmd
+  Figura 10: Obtendo shell reverso com cmd
 </p>
 
 ## Engenharia de Detecção
