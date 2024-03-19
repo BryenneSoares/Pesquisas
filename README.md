@@ -142,7 +142,32 @@ Após realizar todos esses passos e o processo de persisência configurado na m�
 
 ## Engenharia de Detecção
 
+A detecção consiste em ativar a auditoria de segurança do *Event ID 4657*, seguindo o fluxo demonstrado na imagem abaixo.
 
+<p align="center">
+  <img src="imagens/event ID 4657.png">
+  <br>
+  Figura 12: Ativação do Event ID 4657
+</p>
+
+Como podemos observar, o comportamento produzido pela modificação da chave de registro é bem notório, gerando um único evento encontrado no *Microsoft Security Event IDs* e um único Event do Sysmon:
+
+- [4657: A Registry Value was Modified](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventid=4657)
+- Log 13, Sysmon
+
+<p align="center">
+  <img src="imagens/Event ID log de alteração.png">
+  <br>
+  Figura 13: Log evidenciando a alteração da chave de registro
+</p>
+
+<p align="center">
+  <img src="imagens/Event ID 13, Sysmom.png">
+  <br>
+  Figura 14: Event 13, Sysmon
+</p>
+
+### Padrão SIGMA: 
 
 # Conclusão
 
