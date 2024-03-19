@@ -183,7 +183,7 @@ tags:
     - attack.T1546.001 # Event Triggered Execution: Change Default File Association
 logsource:
     category: 'process_creation'
-    product: 'windows'
+    product: 'windows', 'sysmon'
 detection:
     Event:
     	- EventID: 4657
