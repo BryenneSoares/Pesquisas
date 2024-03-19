@@ -169,6 +169,41 @@ Como podemos observar, o comportamento produzido pela modificação da chave de 
 
 ### Padrão SIGMA: 
 
+```yaml
+title: 'CTI Purple Team - Event Triggered Execution: Change Default File Association'
+id: 19469c03-2a2e-4cce-953c-374a8d16c40d
+status: stable
+description: 'Esta regra detecta o comportamento gerado pela modificação da chave de registro de uma extenção de arquivo, para a realização de Persistência.'
+references:
+    - 'https://attack.mitre.org/techniques/T1546/001/'
+author: CTI Purple Team
+date: 22/03/2024
+tags:
+    - attack.persistence.TA0003
+    - attack.T1546.001 # Event Triggered Execution: Change Default File Association
+logsource:
+    category: 'process_creation'
+    product: 'windows'
+detection:
+    Event:
+    	- EventID: 4657
+      ProcessName|contains :
+          - 'regedit.exe'
+    EventoRegistro:
+    	- EventID: 13
+    	- TargetObject|contains|all:
+    		- 'shell'
+    		- 'open'
+    		- 'command'
+    condition: EventID and EventoRegitro
+fields:
+    - ProcessName;
+    - TargetObject.
+falsepositives:
+    - No
+level: high
+```
+
 # Conclusão
 
 Esses são os passos envolvidos na exploração da execução acionada por evento para alterar a associação de arquivo padrão.
