@@ -167,7 +167,7 @@ Como podemos observar, o comportamento produzido pela modificação da chave de 
   Figura 14: Event 13, Sysmon
 </p>
 
-### Padrão SIGMA: 
+### Padrão SIGMA: Event Triggered Execution: Change Default File Association
 
 ```yaml
 title: 'CTI Purple Team - Event Triggered Execution: Change Default File Association'
