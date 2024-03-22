@@ -186,17 +186,15 @@ logsource:
     category: 'process_creation'
     product: 'windows', 'sysmon'
 detection:
-    Event:
-    	- EventID: 4657
-      ProcessName|contains :
-          - 'regedit.exe'
-    EventoRegistro:
-    	- EventID: 13
-    	- TargetObject|contains|all:
-    		- 'shell'
-    		- 'open'
-    		- 'command'
-    condition: EventID and EventoRegitro
+    RegistryModification:
+      EventID:
+        - 4657
+        - 13
+      TargetRegistryKey|contains|all:
+        - 'shell'
+        - 'open'
+        - 'command'
+    condition: RegistryModification
 fields:
     - ProcessName;
     - TargetObject.
@@ -215,4 +213,4 @@ Esperamos que você que leu ou assistiu o Webinar, possa ter compreendido a inte
 
 ## Link do Webinar
 
-Caso você não pode participar do Webinar de apresentação da pesquisa, ou gostaria rever, basta clicar neste [link](https://ishtecnologia.sharepoint.com/sites/CTI-PurpleTeam/_layouts/15/stream.aspx?id=%2Fsites%2FCTI%2DPurpleTeam%2FDocumentos%20Compartilhados%2FVideos%2FCTI%20Purple%20Team%20%2D%20Movimenta%C3%A7%C3%A3o%20Lateral%20Atrav%C3%A9s%20do%20Invoke%2DSMBExec%2Emp4&referrer=StreamWebApp%2EWeb&referrerScenario=AddressBarCopied%2Eview).
+Caso você não pode participar do Webinar de apresentação da pesquisa, ou gostaria rever, basta clicar neste
