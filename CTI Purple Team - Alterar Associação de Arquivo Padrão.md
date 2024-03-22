@@ -3,7 +3,7 @@
   <img src="./imagens/ISHLOGO.png" alt="Logo do Purple Team" width="300" height="300">
 </p>
 
-# CTI Purple Team - Alterar Associação de Arquivo Padrão
+# CTI Purple Team - Execução Acionada por Evento: Alterar Associação de Arquivo Padrão
 
 Nesta pesquisa, iremos abordar a tática [TA0003](https://attack.mitre.org/tactics/TA0003/) (Persistência), dando ênfase a sub-técnica [T1546.001](https://attack.mitre.org/techniques/T1546/001/) (Event Triggered Execution: Change Default File Association).
 
