@@ -213,4 +213,4 @@ Esperamos que você que leu ou assistiu o Webinar, possa ter compreendido a inte
 
 ## Link do Webinar
 
-Caso você não pode participar do Webinar de apresentação da pesquisa, ou gostaria rever, basta clicar neste
+Caso você não pode participar do Webinar de apresentação da pesquisa, ou gostaria rever, basta clicar neste [link](https://ishtecnologia.sharepoint.com/:v:/s/CTI-PurpleTeam/Ec4VyYNxFWtHlKHst_JMY5oBxP0OOPMKydRHO1BqWFiNpQ?e=D94s2B&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D).
