@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img src="./imagens/ISHLOGO.png" alt="Logo do Purple Team" width="300" height="300">
+  <img src="./Imagens/ISHLOGO.png" alt="Logo do Purple Team" width="300" height="300">
 </p>
 
 # CTI Purple Team - Persistência Utilizando Chaves Autorizadas SSH
@@ -38,7 +38,7 @@ ls -al ~/.ssh/id_*.pub
 Se houver uma chave existente, você tem as opções de pular os passos de geração de uma chave SSH, sobrescrever as configurações atuais ou criar um backup da chave existente. Se a chave não existir, você vai ver o seguinte resultado:
 
 <p align="center">
-  <img src="imagens/chave não existente.png">
+  <img src="Imagens/chave não existente.png">
   <br>
   Figura : Par de Chaves SSH Não Existente
 </p>
@@ -46,7 +46,7 @@ Se houver uma chave existente, você tem as opções de pular os passos de gera�
 Se a chave ja existir, terá um output como abaixo:
 
 <p align="center">
-  <img src="imagens/chaves existente.png">
+  <img src="Imagens/chaves existente.png">
   <br>
   Figura : Par de Chaves SSH Existentes
 </p>
@@ -67,7 +67,7 @@ Você será solicitado para escolher um local para as chaves que serão geradas.
 Caso queira escolher outro local, basta digitá-lo agora, caso contrário, apenas pressione `ENTER` para aceitar o padrão.
 
 <p align="center">
-  <img src="imagens/local para chave.png">
+  <img src="Imagens/local para chave.png">
   <br>
   Figura : Atribuindo Local para o Par de Chaves SSH
 </p>
@@ -81,7 +81,7 @@ ssh-keygen -t rsa -b 4096
 Em seguida, será solicitado atribuir uma senha para a chave. Este é um processo opcional, tendo em consideração que essa senha pode ser usada para criptografar o arquivo de chave privada do disco.
 
 <p align="center">
-  <img src="imagens/senha para chave.png">
+  <img src="Imagens/senha para chave.png">
   <br>
   Figura : Atribuir senha para a Chave Criada
 </p>
@@ -89,7 +89,7 @@ Em seguida, será solicitado atribuir uma senha para a chave. Este é um process
 Abaixo podemos vizualizar o par de chaves criadas com sucesso:
 
 <p align="center">
-  <img src="imagens/par de chaves criada.png">
+  <img src="Imagens/par de chaves criada.png">
   <br>
   Figura : Atribuir senha para a Chave Criada
 </p>

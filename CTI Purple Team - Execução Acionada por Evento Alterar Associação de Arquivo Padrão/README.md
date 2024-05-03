@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img src="./imagens/ISHLOGO.png" alt="Logo do Purple Team" width="300" height="300">
+  <img src="./Imagens/ISHLOGO.png" alt="Logo do Purple Team" width="300" height="300">
 </p>
 
 # CTI Purple Team - Execução Acionada por Evento: Alterar Associação de Arquivo Padrão
