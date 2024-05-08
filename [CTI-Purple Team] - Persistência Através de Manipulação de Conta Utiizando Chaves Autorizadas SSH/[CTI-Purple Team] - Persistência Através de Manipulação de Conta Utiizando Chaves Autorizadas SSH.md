@@ -110,11 +110,11 @@ Embora os métodos abaixo alcancem o mesmo resultado final, o mais direto e auto
 
 Uma forma direta de transferir sua chave pública para um servidor já existente é através do `ssh-copy-id`, um utilitário conhecido pela sua simplicidade. Se estiver disponível, é recomendado utilizá-lo.
 
-O ssh-copy-id faz parte dos pacotes OpenSSH em muitas distribuições, o que significa que você provavelmente já o tem instalado no seu sistema local. No entanto, para que esse método funcione, é necessário ter acesso SSH com senha ao servidor.
+O **ssh-copy-id** faz parte dos pacotes OpenSSH em muitas distribuições, o que significa que você provavelmente já o tem instalado no seu sistema local. No entanto, para que esse método funcione, é necessário ter acesso SSH com senha ao servidor.
 
-Para usar o utilitário, você precisa especificar o host remoto ao qual deseja se conectar e a conta de usuário à qual você tem acesso SSH baseado em senha. Esta é a conta onde sua chave SSH pública será copiada.
+Para usar o utilitário, é preciso especificar o host remoto ao qual deseja se conectar e a conta de usuário à qual você tem acesso SSH baseado em senha. Esta é a conta onde sua chave SSH pública será copiada.
 
-A sintaxe do comanda é:
+A sintaxe do comando é:
 
 ```zsh
 ssh-copy-id username@remote_host
@@ -122,14 +122,14 @@ ssh-copy-id username@remote_host
 Você pode ver uma mensagem como esta:
 
 <p align="center">
-  <img src="imagens/">
+  <img src="imagens/host remoto não reconhecido.png">
   <br>
-  Figura : 
+  Figura : Host Remoto Não Reconhecido
 </p>
 
 Isso significa que o seu computador local não reconhece o host remoto. Isso acontecerá na primeira vez que você se conectar a um novo host. Digite `yes` e pressione `ENTER` para continuar.
 
-Em seguida, o utilitário verificará sua conta local em busca da `id_rsa.pub`, chave que criamos anteriormente. Ao encontrar a chave, ele solicitará a senha da conta do usuário remoto:
+Em seguida, o utilitário verificará sua conta local em busca da `id_rsa.pub`, a chave que criamos anteriormente. Ao encontrar a chave, ele solicitará a senha da conta do usuário remoto:
 
 <p align="center">
   <img src="imagens/auntenticação na chave.png">
@@ -137,25 +137,26 @@ Em seguida, o utilitário verificará sua conta local em busca da `id_rsa.pub`, 
   Figura : Senha da Conta Remota
 </p>
 
-Digite a senha (sua digitação não será exibida por motivos de segurança) e pressione ENTER. O utilitário se conectará à conta no host remoto usando a senha fornecida. Em seguida, ele copiará o conteúdo da sua cahve `~/.ssh/id_rsa.pub` em um arquivo no `~/.ssh` diretório inicial da conta remota chamado ***`authorized_keys`***.
+Digite a senha (sua digitação não será exibida por motivos de segurança) e pressione `ENTER`. O utilitário  irá estabelecer uma conexão com a conta no servidor remoto utilizando a senha fornecida. Em seguida, será feita a cópia do conteúdo da sua chave `~/.ssh/id_rsa.pub` para um arquivo no diretório inicial da conta remota, denominado ***authorized_keys*** em `~/.ssh`.
 
 Você verá uma saída semelhante a esta:
 
 <p align="center">
-  <img src="imagens/">
+  <img src="imagens/chave copiada.png">
   <br>
-  Figura : 
+  Figura : Chave Copiada com Sucesso
 </p>
 
 Neste ponto, sua chave **`id_rsa.pub`** foi carregada na conta remota. Você pode continuar na próxima seção.
 
 ### 2° Método: Copiar a Chave Pública usando `SSH`
 
-Se você não tiver ssh-copy-idacesso SSH baseado em senha a uma conta em seu servidor, poderá fazer upload de suas chaves usando um método SSH convencional.
 
-Podemos fazer isso enviando o conteúdo de nossa chave SSH pública em nosso computador local e canalizando-o por meio de uma conexão SSH para o servidor remoto. Por outro lado, podemos ter certeza de que o ~/.sshdiretório existe na conta que estamos usando e então enviar o conteúdo que canalizamos para um arquivo chamado authorized_keysdentro deste diretório.
+Caso não tenha acesso SSH baseado em senha para uma conta em seu servidor usando **ssh-copy-id**, é possível carregar suas chaves utilizando um método SSH convencional.
 
-Usaremos o símbolo `>>` de redirecionamento para anexar o conteúdo em vez de substituí-lo. Isso nos permitirá adicionar chaves sem destruir as chaves adicionadas anteriormente.
+Podemos fazer isso enviando o conteúdo de nossa chave SSH pública em nosso computador local e canalizando-o através de uma conexão SSH para o servidor remoto. Alternativamente, podemos garantir a existência do diretório **~/.ssh** na conta que estamos utilizando e então enviar o conteúdo que canalizamos para um arquivo chamado ***authorized_keys*** dentro deste diretório.
+
+Para evitar a substituição do conteúdo existente, usaremos o símbolo de redirecionamento `>>` para anexar o conteúdo. Dessa forma, podemos adicionar chaves sem apagar as chaves adicionadas anteriormente.
 
 O comando completo ficará assim:
 
@@ -166,22 +167,22 @@ cat ~/.ssh/id_rsa.pub | ssh username@remote_host "mkdir -p ~/.ssh && cat >> ~/.s
 Você pode ver uma mensagem como esta:
 
 <p align="center">
-  <img src="imagens/local da chave.png">
+  <img src="imagens/copia da chave método 2.png">
   <br>
-  Figura : 
+  Figura : Cópia da Chave Usando SSh
 </p>
 
-Isso significa que o seu computador local não reconhece o host remoto. Isso acontecerá na primeira vez que você se conectar a um novo host. Digite yese pressione ENTERpara continuar.
+Isso significa que o seu computador local não reconhece o host remoto. Isso acontecerá na primeira vez que você se conectar a um novo host. Digite `yes` e pressione `ENTER` para continuar.
 
 Posteriormente, você será solicitado a fornecer a senha da conta à qual está tentando se conectar:
 
 <p align="center">
-  <img src="imagens/local da chave.png">
+  <img src="imagens/auntenticação na chave com método 2.png">
   <br>
-  Figura : 
+  Figura : Autenticação na Conta Remota
 </p>
 
-Após inserir sua senha, o conteúdo da sua id_rsa.pubchave será copiado para o final do authorized_keysarquivo da conta do usuário remoto. Continue para a próxima seção se tiver sido bem-sucedido.
+Após inserir sua senha, o conteúdo da sua chave **id_rsa.pub** será copiado para o final do arquivo **authorized_keys** da conta do usuário remoto. Continue para a próxima seção se tiver sido bem-sucedido.
 
 ### 3° Método: Copiar a Chave Pública usando Manualmente
 
@@ -245,7 +246,34 @@ Se você não forneceu uma senha para sua chave privada, você fará login imedi
 
 Se tiver sucesso, continue para descobrir como bloquear o servidor.
 
-## Emulação de Ameaça - Etapa IV: Desabilitar a Autenticação por Senha SSH
+## Engenharia de Detecção
+
+A detecção consiste em ativar a auditoria de segurança do *Event ID 4657*, seguindo o fluxo demonstrado na imagem abaixo.
+
+<p align="center">
+  <img src="imagens/event ID 4657.png">
+  <br>
+  Figura 12: Ativação do Event ID 4657
+</p>
+
+Como podemos observar, o comportamento produzido pela modificação da chave de registro é bem notório, gerando um único evento encontrado no *Microsoft Security Event IDs* e um único Event do Sysmon:
+
+- [4657: A Registry Value was Modified](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventid=4657)
+- Log 13, Sysmon
+
+<p align="center">
+  <img src="imagens/Event ID log de alteração.png">
+  <br>
+  Figura 13: Log evidenciando a alteração da chave de registro
+</p>
+
+<p align="center">
+  <img src="imagens/Event ID 13, Sysmom.png">
+  <br>
+  Figura 14: Event 13, Sysmon
+</p>
+
+## Mitigação: Desabilitar a Autenticação por Senha SSH
 
 Se você conseguiu fazer login em sua conta usando SSH sem uma senha, você configurou com êxito a autenticação baseada em chave SSH em sua conta. No entanto, o seu mecanismo de autenticação baseado em senha ainda está ativo, o que significa que o seu servidor ainda está exposto a ataques de força bruta.
 
@@ -274,33 +302,6 @@ sudo systemctl restart ssh
 ```
 
 Depois de concluir esta etapa, você fez a transição bem-sucedida do seu daemon SSH para responder apenas às chaves SSH.
-
-## Engenharia de Detecção
-
-A detecção consiste em ativar a auditoria de segurança do *Event ID 4657*, seguindo o fluxo demonstrado na imagem abaixo.
-
-<p align="center">
-  <img src="imagens/event ID 4657.png">
-  <br>
-  Figura 12: Ativação do Event ID 4657
-</p>
-
-Como podemos observar, o comportamento produzido pela modificação da chave de registro é bem notório, gerando um único evento encontrado no *Microsoft Security Event IDs* e um único Event do Sysmon:
-
-- [4657: A Registry Value was Modified](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventid=4657)
-- Log 13, Sysmon
-
-<p align="center">
-  <img src="imagens/Event ID log de alteração.png">
-  <br>
-  Figura 13: Log evidenciando a alteração da chave de registro
-</p>
-
-<p align="center">
-  <img src="imagens/Event ID 13, Sysmom.png">
-  <br>
-  Figura 14: Event 13, Sysmon
-</p>
 
 ### Padrão SIGMA: Event Triggered Execution: Change Default File Association
 
