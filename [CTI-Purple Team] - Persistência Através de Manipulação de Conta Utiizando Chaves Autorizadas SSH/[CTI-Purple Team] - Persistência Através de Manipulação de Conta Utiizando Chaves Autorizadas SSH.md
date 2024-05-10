@@ -91,7 +91,7 @@ Abaixo podemos vizualizar o par de chaves criadas com sucesso:
 <p align="center">
   <img src="Imagens/par de chaves criada.png">
   <br>
-  Figura : Atribuir senha para a Chave Criada
+  Figura : Chaves Criadas com Sucesso
 </p>
 
 A próxima etapa é colocar a chave pública em seu servidor para que você possa usar a autenticação de chave SSH para fazer login.
@@ -124,7 +124,7 @@ Você pode ver uma mensagem como esta:
 <p align="center">
   <img src="imagens/host remoto não reconhecido.png">
   <br>
-  Figura : Host Remoto Não Reconhecido
+  Figura : Host Remoto Não Reconhecido no Primeiro Login
 </p>
 
 Isso significa que o seu computador local não reconhece o host remoto. Isso acontecerá na primeira vez que você se conectar a um novo host. Digite `yes` e pressione `ENTER` para continuar.
@@ -186,11 +186,11 @@ Após inserir sua senha, o conteúdo da sua chave **id_rsa.pub** será copiado p
 
 ### 3° Método: Copiar a Chave Pública usando Manualmente
 
-Se você não tiver acesso SSH baseado em senha ao seu servidor disponível, você terá que fazer o processo acima manualmente.
+Se, por alguma razão você não tiver acesso SSH baseado em senha ao seu servidor, precisará executar o procedimento manualmente.
 
-O conteúdo do seu id_rsa.pubarquivo deverá ser adicionado a um arquivo ~/.ssh/authorized_keysna sua máquina remota de alguma forma.
+O conteúdo do arquivo **id_rsa.pub** deverá ser inserido no arquivo `~/.ssh/authorized_keys` em sua máquina remota de alguma maneira.
 
-Para exibir o conteúdo da sua id_rsa.pubchave, digite isto em seu computador local:
+Para visualizar o conteúdo da sua chave **id_rsa.pub**, digite o seguinte comando em seu computador local:
 
 ```zsh
 cat ~/.ssh/id_rsa.pub
@@ -199,26 +199,30 @@ cat ~/.ssh/id_rsa.pub
 Você verá o conteúdo da chave, que pode ser parecido com isto:
 
 <p align="center">
-  <img src="imagens/local da chave.png">
+  <img src="imagens/conteúdo da chave método 3.png">
   <br>
-  Figura : 
+  Figura : Conteúdo da Chave SSH
 </p>
 
-Acesse seu host remoto usando qualquer método disponível. Pode ser um console baseado na Web fornecido pelo seu provedor de infraestrutura.
-
-Depois de ter acesso à sua conta no servidor remoto, você deve certificar-se de que o ~/.sshdiretório foi criado. Este comando criará o diretório se necessário ou não fará nada se ele já existir:
+Depois de ter acesso à sua conta no servidor remoto, você deve certificar-se de que o diretório `~/.ssh` foi criado. Este comando criará o diretório se necessário ou não fará nada se ele já existir:
 
 ```zsh
 mkdir -p ~/.ssh
 ```
 
-Agora você pode criar ou modificar o authorized_keysarquivo neste diretório. Você pode adicionar o conteúdo do seu id_rsa.pubarquivo ao final do authorized_keysarquivo, criando-o se necessário, usando isto:
+Agora você pode criar ou modificar o arquivo `authorized_keys` neste diretório. Você pode adicionar o conteúdo do seu arquivo `id_rsa.pub` ao final do arquivo `authorized_keys`, criando-o se necessário, utilizando o comando abaixo:
 
 ```zsh
 echo public_key_string >> ~/.ssh/authorized_keys
 ```
 
-No comando acima, substitua public_key_stringpela saída do cat ~/.ssh/id_rsa.pubcomando que você executou em seu sistema local. Deve começar com ssh-rsa AAAA...ou similar.
+No comando acima, substitua ***`public_key_string`*** pela saída do comando cat ***`~/.ssh/id_rsa.pub`*** que você executou no passo anterior. Deve começar com `ssh-rsa AAAA...` ou algo similar.
+
+Uma vez que a chave tiver sido copiada, você pode configurar as permissões requeridas pelo com o comando abaixo:
+
+```zsh
+chmod -766 ~/.ssh
+```
 
 Se isso funcionar, você pode testar sua nova autenticação SSH baseada em chave.
 
@@ -235,16 +239,16 @@ ssh username@remote_host
 Se esta for a primeira vez que você se conecta a este host (se você usou o último método acima), você poderá ver algo assim:
 
 <p align="center">
-  <img src="imagens/local da chave.png">
+  <img src="imagens/host nao reconhecido método 3.png">
   <br>
-  Figura : 
+  Figura : Host Remoto Não Reconhecido no Primeiro Login
 </p>
 
-Isso significa que o seu computador local não reconhece o host remoto. Digite yese pressione ENTERpara continuar.
+Isso significa que o seu computador local não reconhece o host remoto. Digite `yes`e pressione `ENTER` para continuar.
 
 Se você não forneceu uma senha para sua chave privada, você fará login imediatamente. Se você forneceu uma senha para a chave privada quando criou a chave, será necessário inseri-la agora. Posteriormente, uma nova sessão shell será criada para você com a conta no sistema remoto.
 
-Se tiver sucesso, continue para descobrir como bloquear o servidor.
+Se tiver sucesso, continue para descobrir como bloquear o servidor na sessão de mitgação, após a engenharia de detecção.
 
 ## Engenharia de Detecção
 
