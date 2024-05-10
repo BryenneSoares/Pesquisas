@@ -122,7 +122,7 @@ ssh-copy-id username@remote_host
 Você pode ver uma mensagem como esta:
 
 <p align="center">
-  <img src="imagens/host remoto não reconhecido.png">
+  <img src="Imagens/host remoto não reconhecido.png">
   <br>
   Figura : Host Remoto Não Reconhecido no Primeiro Login
 </p>
@@ -132,7 +132,7 @@ Isso significa que o seu computador local não reconhece o host remoto. Isso aco
 Em seguida, o utilitário verificará sua conta local em busca da `id_rsa.pub`, a chave que criamos anteriormente. Ao encontrar a chave, ele solicitará a senha da conta do usuário remoto:
 
 <p align="center">
-  <img src="imagens/auntenticação na chave.png">
+  <img src="Imagens/auntenticação na chave.png">
   <br>
   Figura : Senha da Conta Remota
 </p>
@@ -142,7 +142,7 @@ Digite a senha (sua digitação não será exibida por motivos de segurança) e 
 Você verá uma saída semelhante a esta:
 
 <p align="center">
-  <img src="imagens/chave copiada.png">
+  <img src="Imagens/chave copiada.png">
   <br>
   Figura : Chave Copiada com Sucesso
 </p>
@@ -167,7 +167,7 @@ cat ~/.ssh/id_rsa.pub | ssh username@remote_host "mkdir -p ~/.ssh && cat >> ~/.s
 Você pode ver uma mensagem como esta:
 
 <p align="center">
-  <img src="imagens/copia da chave método 2.png">
+  <img src="Imagens/copia da chave método 2.png">
   <br>
   Figura : Cópia da Chave Usando SSh
 </p>
@@ -177,7 +177,7 @@ Isso significa que o seu computador local não reconhece o host remoto. Isso aco
 Posteriormente, você será solicitado a fornecer a senha da conta à qual está tentando se conectar:
 
 <p align="center">
-  <img src="imagens/auntenticação na chave com método 2.png">
+  <img src="Imagens/auntenticação na chave com método 2.png">
   <br>
   Figura : Autenticação na Conta Remota
 </p>
@@ -199,7 +199,7 @@ cat ~/.ssh/id_rsa.pub
 Você verá o conteúdo da chave, que pode ser parecido com isto:
 
 <p align="center">
-  <img src="imagens/conteúdo da chave método 3.png">
+  <img src="Imagens/conteúdo da chave método 3.png">
   <br>
   Figura : Conteúdo da Chave SSH
 </p>
@@ -239,7 +239,7 @@ ssh username@remote_host
 Se esta for a primeira vez que você se conecta a este host (se você usou o último método acima), você poderá ver algo assim:
 
 <p align="center">
-  <img src="imagens/host nao reconhecido método 3.png">
+  <img src="Imagens/host nao reconhecido método 3.png">
   <br>
   Figura : Host Remoto Não Reconhecido no Primeiro Login
 </p>
@@ -255,7 +255,7 @@ Se tiver sucesso, continue para descobrir como bloquear o servidor na sessão de
 A detecção consiste em ativar a auditoria de segurança do *Event ID 4657*, seguindo o fluxo demonstrado na imagem abaixo.
 
 <p align="center">
-  <img src="imagens/event ID 4657.png">
+  <img src="Imagens/event ID 4657.png">
   <br>
   Figura 12: Ativação do Event ID 4657
 </p>
@@ -266,13 +266,13 @@ Como podemos observar, o comportamento produzido pela modificação da chave de 
 - Log 13, Sysmon
 
 <p align="center">
-  <img src="imagens/Event ID log de alteração.png">
+  <img src="Imagens/Event ID log de alteração.png">
   <br>
   Figura 13: Log evidenciando a alteração da chave de registro
 </p>
 
 <p align="center">
-  <img src="imagens/Event ID 13, Sysmom.png">
+  <img src="Imagens/Event ID 13, Sysmom.png">
   <br>
   Figura 14: Event 13, Sysmon
 </p>
@@ -292,7 +292,7 @@ sudo nano /etc/ssh/sshd_config
 Dentro do arquivo, procure por uma diretiva chamada PasswordAuthentication. Isso pode ser comentado. Remova o comentário da linha removendo qualquer #no início da linha e defina o valor como no. Isso desativará sua capacidade de fazer login por meio de SSH usando senhas de conta:
 
 <p align="center">
-  <img src="imagens/event ID 4657.png">
+  <img src="Imagens/event ID 4657.png">
   <br>
   Figura 12: Ativação do Event ID 4657
 </p>
