@@ -277,7 +277,7 @@ Como podemos observar, o comportamento produzido pela modificação da chave de 
   Figura 14: Event 13, Sysmon
 </p>
 
-## Mitigação: Desabilitar a Autenticação por Senha SSH
+## Mitigação: Desabilitar a Autenticação Sem Senha SSH
 
 Se você conseguiu fazer login em sua conta usando SSH sem uma senha, você configurou com êxito a autenticação baseada em chave SSH em sua conta. No entanto, o seu mecanismo de autenticação baseado em senha ainda está ativo, o que significa que o seu servidor ainda está exposto a ataques de força bruta.
 
@@ -294,7 +294,7 @@ Dentro do arquivo, procure por uma diretiva chamada `PasswordAuthentication`. Is
 <p align="center">
   <img src="Imagens/Desativar Capacidade de Fazer Login com SSH.png">
   <br>
-  Figura 12: Desativar Capacidade de Realizar Login com SSH
+  Figura 12: Desativar Capacidade de Realizar Login sem Senha com SSH
 </p>
 
 Salve e feche o arquivo quando terminar. Para realmente implementar as alterações que acabamos de fazer, você deve reiniciar o servidor.
