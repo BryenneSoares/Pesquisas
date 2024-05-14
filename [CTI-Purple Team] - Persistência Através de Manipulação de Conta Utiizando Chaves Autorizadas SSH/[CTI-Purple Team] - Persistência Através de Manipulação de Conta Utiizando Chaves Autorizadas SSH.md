@@ -169,7 +169,7 @@ Você pode ver uma mensagem como esta:
 <p align="center">
   <img src="Imagens/copia da chave método 2.png">
   <br>
-  Figura : Cópia da Chave Usando SSh
+  Figura : Host Remoto Não Reconhecido no Primeiro Login
 </p>
 
 Isso significa que o seu computador local não reconhece o host remoto. Isso acontecerá na primeira vez que você se conectar a um novo host. Digite `yes` e pressione `ENTER` para continuar.
@@ -179,7 +179,7 @@ Posteriormente, você será solicitado a fornecer a senha da conta à qual está
 <p align="center">
   <img src="Imagens/auntenticação na chave com método 2.png">
   <br>
-  Figura : Autenticação na Conta Remota
+  Figura : Solicitação de Senha da Conta Remota
 </p>
 
 Após inserir sua senha, o conteúdo da sua chave **id_rsa.pub** será copiado para o final do arquivo **authorized_keys** da conta do usuário remoto. Continue para a próxima seção se tiver sido bem-sucedido.
@@ -281,23 +281,23 @@ Como podemos observar, o comportamento produzido pela modificação da chave de 
 
 Se você conseguiu fazer login em sua conta usando SSH sem uma senha, você configurou com êxito a autenticação baseada em chave SSH em sua conta. No entanto, o seu mecanismo de autenticação baseado em senha ainda está ativo, o que significa que o seu servidor ainda está exposto a ataques de força bruta.
 
-Antes de concluir as etapas desta seção, certifique-se de ter a autenticação baseada em chave SSH configurada para a conta raiz neste servidor ou, de preferência, de ter a autenticação baseada em chave SSH configurada para uma conta neste servidor com sudoacesso. Esta etapa bloqueará logins baseados em senha, portanto, é essencial garantir que você ainda poderá obter acesso administrativo.
+Antes de concluir as etapas desta seção, certifique-se de ter a autenticação baseada em chave SSH configurada para a conta **raiz** neste servidor ou, de preferência, de ter a autenticação baseada em chave SSH configurada para uma conta neste servidor com acesso `sudo`. Esta etapa bloqueará logins baseados em senha, portanto, é essencial garantir que você ainda poderá obter acesso administrativo.
 
-Assim que as condições acima forem verdadeiras, faça login em seu servidor remoto com chaves SSH, como root ou com uma conta com sudoprivilégios. Abra o arquivo de configuração do daemon SSH:
+Assim que as condições acima forem verdadeiras, faça login em seu servidor remoto com chaves SSH, como **root** ou com uma conta com de privilégios `sudo`. Abra o arquivo de configuração do `daemon` SSH:
 
 ```zsh
 sudo nano /etc/ssh/sshd_config
 ```
 
-Dentro do arquivo, procure por uma diretiva chamada PasswordAuthentication. Isso pode ser comentado. Remova o comentário da linha removendo qualquer #no início da linha e defina o valor como no. Isso desativará sua capacidade de fazer login por meio de SSH usando senhas de conta:
+Dentro do arquivo, procure por uma diretiva chamada `PasswordAuthentication`. Isso pode ser comentado. Remova o comentário da linha removendo qualquer `#`no inicio da linha e defina o valor como `no`. Isso desativará sua capacidade de fazer login por meio de SSH usando senhas de conta:
 
 <p align="center">
-  <img src="Imagens/event ID 4657.png">
+  <img src="Imagens/Desativar Capacidade de Fazer Login com SSH.png">
   <br>
-  Figura 12: Ativação do Event ID 4657
+  Figura 12: Desativar Capacidade de Realizar Login com SSH
 </p>
 
-Salve e feche o arquivo quando terminar. Para realmente implementar as alterações que acabamos de fazer, você deve reiniciar o serviço.
+Salve e feche o arquivo quando terminar. Para realmente implementar as alterações que acabamos de fazer, você deve reiniciar o servidor.
 
 Na maioria das distribuições Linux, você pode emitir o seguinte comando para fazer isso:
 
@@ -305,35 +305,33 @@ Na maioria das distribuições Linux, você pode emitir o seguinte comando para 
 sudo systemctl restart ssh
 ```
 
-Depois de concluir esta etapa, você fez a transição bem-sucedida do seu daemon SSH para responder apenas às chaves SSH.
+Depois de concluir esta etapa, você fez a transição bem-sucedida do seu **daemon** SSH para responder apenas às chaves SSH.
 
-### Padrão SIGMA: Event Triggered Execution: Change Default File Association
+### Padrão SIGMA: Account Manipulation: SSH Authorized Keys
 
 ```yaml
 title: 'CTI Purple Team - Persistência Utilizando Chaves Autorizadas SSH'
-id: 19469c03-2a2e-4cce-953c-374a8d16c40d
+id: d4bb6e92-00b8-48be-a11e-bf6591796548
 status: stable
-description: 'Esta regra detecta o comportamento gerado pela modificação da chave de registro de uma extenção de arquivo, para a realização de Persistência.'
+description: 'Esta regra detecta o comportamento gerado pela modificação do arquivo de chaves autorizadas SSH no Linux, para a realização de Persistência.'
 references:
     - 'https://attack.mitre.org/techniques/T1098/004/'
 author: CTI Purple Team
-date: 10/04/2024
+date: 17/05/2024
 tags:
     - attack.persistence.TA0003
     - attack.T1098.004 # Account Manipulation: SSH Authorized Keys
 logsource:
     category: 'process_creation'
-    product: 'windows', 'sysmon'
+    product: 'sysmon'
 detection:
     RegistryModification:
       EventID:
-        - 4657
-        - 13
-      TargetRegistryKey|contains|all:
-        - 'shell'
-        - 'open'
-        - 'command'
-    condition: RegistryModification
+        - 1
+        - 
+      Process.command_line|contains|all:
+        - 'authorized_keys'
+    condition:
 fields:
     - ProcessName;
     - TargetObject.
@@ -350,6 +348,6 @@ Esperamos que você que leu ou assistiu o Webinar, possa ter compreendido a inte
 
 ## Link do Webinar
 
-Caso você não pode participar do Webinar de apresentação da pesquisa, ou gostaria rever, basta clicar neste [link](https://ishtecnologia.sharepoint.com/:v:/s/CTI-PurpleTeam/Ec4VyYNxFWtHlKHst_JMY5oBxP0OOPMKydRHO1BqWFiNpQ?e=D94s2B&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D).
+Caso você não pode participar do Webinar de apresentação da pesquisa, ou gostaria rever, basta clicar neste [link]
 
 
