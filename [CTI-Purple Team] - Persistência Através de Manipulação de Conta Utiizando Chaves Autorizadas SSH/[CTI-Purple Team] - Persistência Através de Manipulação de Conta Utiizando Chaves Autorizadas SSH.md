@@ -349,7 +349,7 @@ level: high
 
 ## Conclusão
 
-Agora você deve ter a autenticação baseada em chave SSH configurada e em execução no seu servidor, permitindo entrar sem fornecer uma senha de conta. A partir daqui, há muitas direções que você pode seguir. Se quiser saber mais sobre como trabalhar com SSH, dê uma olhada em nosso guia básico de SSH .
+Agora você deve ter a autenticação baseada em chave SSH configurada e em execução no seu servidor, permitindo entrar sem fornecer uma senha de conta. A partir daqui, há muitas direções que você pode seguir.
 
 Esperamos que você que leu ou assistiu o Webinar, possa ter compreendido a inteligência que trouxemos nesta pesquisa. Qualquer dúvida, é só nos contactar.
 
