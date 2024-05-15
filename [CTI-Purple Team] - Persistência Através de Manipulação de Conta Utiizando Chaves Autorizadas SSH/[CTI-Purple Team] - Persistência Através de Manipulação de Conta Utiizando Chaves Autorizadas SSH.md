@@ -40,7 +40,7 @@ Se houver uma chave existente, você tem as opções de pular os passos de gera�
 <p align="center">
   <img src="Imagens/chave não existente.png">
   <br>
-  Figura : Par de Chaves SSH Não Existente
+  Figura 1 : Par de Chaves SSH Não Existente
 </p>
 
 Se a chave ja existir, terá um output como abaixo:
@@ -48,7 +48,7 @@ Se a chave ja existir, terá um output como abaixo:
 <p align="center">
   <img src="Imagens/chaves existente.png">
   <br>
-  Figura : Par de Chaves SSH Existentes
+  Figura 2 : Par de Chaves SSH Existentes
 </p>
 
 Em seguida, vamos prosseguir com a geração da chave SSH. Para gerar uma chave pública no Ubuntu, utiliza-se o utilitário especial chamado `ssh-keygen -t rsa` ou também pode utilizar a versão mais simples do comando `ssh-keygen`. 
@@ -62,6 +62,12 @@ ssh-keygen -t rsa
 ssh-keygen
 ```
 
+***Info:*** A chave padrão é de 2048 bits. Mas se você quer mais segurança basta trocar o valor para 4096 bits. Neste caso o comando será:
+
+```zsh
+ssh-keygen -t rsa -b 4096
+```
+
 Você será solicitado para escolher um local para as chaves que serão geradas. Por padrão, as chaves serão armazenadas no diretório `~/.ssh` do diretório inicial do usuário. A chave privada será chamada `id_rsa` e a chave pública associada será chamada `id_rsa.pub`. 
 
 Caso queira escolher outro local, basta digitá-lo agora, caso contrário, apenas pressione `ENTER` para aceitar o padrão.
@@ -69,21 +75,15 @@ Caso queira escolher outro local, basta digitá-lo agora, caso contrário, apena
 <p align="center">
   <img src="Imagens/local para chave.png">
   <br>
-  Figura : Atribuindo Local para o Par de Chaves SSH
+  Figura 3 : Atribuindo Local para o Par de Chaves SSH
 </p>
-
-***Info:*** A chave padrão é de 2048 bits. Mas se você quer mais segurança basta trocar o valor para 4096 bits. Neste caso o comando será:
-
-```zsh
-ssh-keygen -t rsa -b 4096
-```
 
 Em seguida, será solicitado atribuir uma senha para a chave. Este é um processo opcional, tendo em consideração que essa senha pode ser usada para criptografar o arquivo de chave privada do disco.
 
 <p align="center">
   <img src="Imagens/senha para chave.png">
   <br>
-  Figura : Atribuir senha para a Chave Criada
+  Figura 4 : Atribuir senha para a Chave Criada
 </p>
 
 Abaixo podemos vizualizar o par de chaves criadas com sucesso:
@@ -91,7 +91,7 @@ Abaixo podemos vizualizar o par de chaves criadas com sucesso:
 <p align="center">
   <img src="Imagens/par de chaves criada.png">
   <br>
-  Figura : Chaves Criadas com Sucesso
+  Figura 5 : Chaves Criadas com Sucesso
 </p>
 
 A próxima etapa é colocar a chave pública em seu servidor para que você possa usar a autenticação de chave SSH para fazer login.
@@ -124,7 +124,7 @@ Você pode ver uma mensagem como esta:
 <p align="center">
   <img src="Imagens/host remoto não reconhecido.png">
   <br>
-  Figura : Host Remoto Não Reconhecido no Primeiro Login
+  Figura 6 : Host Remoto Não Reconhecido no Primeiro Login
 </p>
 
 Isso significa que o seu computador local não reconhece o host remoto. Isso acontecerá na primeira vez que você se conectar a um novo host. Digite `yes` e pressione `ENTER` para continuar.
@@ -134,7 +134,7 @@ Em seguida, o utilitário verificará sua conta local em busca da `id_rsa.pub`, 
 <p align="center">
   <img src="Imagens/auntenticação na chave.png">
   <br>
-  Figura : Senha da Conta Remota
+  Figura 7 : Senha da Conta Remota
 </p>
 
 Digite a senha (sua digitação não será exibida por motivos de segurança) e pressione `ENTER`. O utilitário  irá estabelecer uma conexão com a conta no servidor remoto utilizando a senha fornecida. Em seguida, será feita a cópia do conteúdo da sua chave `~/.ssh/id_rsa.pub` para um arquivo no diretório inicial da conta remota, denominado ***authorized_keys*** em `~/.ssh`.
@@ -144,7 +144,7 @@ Você verá uma saída semelhante a esta:
 <p align="center">
   <img src="Imagens/chave copiada.png">
   <br>
-  Figura : Chave Copiada com Sucesso
+  Figura 8 : Chave Copiada com Sucesso
 </p>
 
 Neste ponto, sua chave **`id_rsa.pub`** foi carregada na conta remota. Você pode continuar na próxima seção.
@@ -169,7 +169,7 @@ Você pode ver uma mensagem como esta:
 <p align="center">
   <img src="Imagens/copia da chave método 2.png">
   <br>
-  Figura : Host Remoto Não Reconhecido no Primeiro Login
+  Figura 9 : Host Remoto Não Reconhecido no Primeiro Login
 </p>
 
 Isso significa que o seu computador local não reconhece o host remoto. Isso acontecerá na primeira vez que você se conectar a um novo host. Digite `yes` e pressione `ENTER` para continuar.
@@ -179,7 +179,7 @@ Posteriormente, você será solicitado a fornecer a senha da conta à qual está
 <p align="center">
   <img src="Imagens/auntenticação na chave com método 2.png">
   <br>
-  Figura : Solicitação de Senha da Conta Remota
+  Figura 10 : Solicitação de Senha da Conta Remota
 </p>
 
 Após inserir sua senha, o conteúdo da sua chave **id_rsa.pub** será copiado para o final do arquivo **authorized_keys** da conta do usuário remoto. Continue para a próxima seção se tiver sido bem-sucedido.
@@ -201,7 +201,7 @@ Você verá o conteúdo da chave, que pode ser parecido com isto:
 <p align="center">
   <img src="Imagens/conteúdo da chave método 3.png">
   <br>
-  Figura : Conteúdo da Chave SSH
+  Figura 11 : Conteúdo da Chave SSH
 </p>
 
 Depois de ter acesso à sua conta no servidor remoto, você deve certificar-se de que o diretório `~/.ssh` foi criado. Este comando criará o diretório se necessário ou não fará nada se ele já existir:
@@ -241,7 +241,7 @@ Se esta for a primeira vez que você se conecta a este host (se você usou o úl
 <p align="center">
   <img src="Imagens/host nao reconhecido método 3.png">
   <br>
-  Figura : Host Remoto Não Reconhecido no Primeiro Login
+  Figura 12 : Host Remoto Não Reconhecido no Primeiro Login
 </p>
 
 Isso significa que o seu computador local não reconhece o host remoto. Digite `yes`e pressione `ENTER` para continuar.
@@ -250,6 +250,14 @@ Se você não forneceu uma senha para sua chave privada, você fará login imedi
 
 Se tiver sucesso, continue para descobrir como bloquear o servidor na sessão de mitgação, após a engenharia de detecção.
 
+Abaixo é demonstrado a emulação do início do processo de ataque, desde a criação das chaves, a cópia e authenticação:
+
+<p align="center">
+  <img src="Imagens/gif da emulação.gif">
+  <br>
+  Figura 13: Demonstração do Processo de Ataque
+</p>
+
 ## Engenharia de Detecção
 
 A detecção consiste em ativar a auditoria de segurança do *Event ID 4657*, seguindo o fluxo demonstrado na imagem abaixo.
@@ -257,7 +265,7 @@ A detecção consiste em ativar a auditoria de segurança do *Event ID 4657*, se
 <p align="center">
   <img src="Imagens/event ID 4657.png">
   <br>
-  Figura 12: Ativação do Event ID 4657
+  Figura : Ativação do Event ID 4657
 </p>
 
 Como podemos observar, o comportamento produzido pela modificação da chave de registro é bem notório, gerando um único evento encontrado no *Microsoft Security Event IDs* e um único Event do Sysmon:
@@ -268,13 +276,13 @@ Como podemos observar, o comportamento produzido pela modificação da chave de 
 <p align="center">
   <img src="Imagens/Event ID log de alteração.png">
   <br>
-  Figura 13: Log evidenciando a alteração da chave de registro
+  Figura : Log evidenciando a alteração da chave de registro
 </p>
 
 <p align="center">
   <img src="Imagens/Event ID 13, Sysmom.png">
   <br>
-  Figura 14: Event 13, Sysmon
+  Figura : Event 13, Sysmon
 </p>
 
 ## Mitigação: Desabilitar a Autenticação Sem Senha SSH
@@ -294,7 +302,7 @@ Dentro do arquivo, procure por uma diretiva chamada `PasswordAuthentication`. Is
 <p align="center">
   <img src="Imagens/Desativar Capacidade de Fazer Login com SSH.png">
   <br>
-  Figura 12: Desativar Capacidade de Realizar Login sem Senha com SSH
+  Figura : Desativar Capacidade de Realizar Login sem Senha com SSH
 </p>
 
 Salve e feche o arquivo quando terminar. Para realmente implementar as alterações que acabamos de fazer, você deve reiniciar o servidor.
@@ -325,18 +333,17 @@ logsource:
     category: 'process_creation'
     product: 'sysmon'
 detection:
-    RegistryModification:
+    Process_Creation:
       EventID:
         - 1
-        - 
       Process.command_line|contains|all:
         - 'authorized_keys'
-    condition:
+    condition: Process_Creation
 fields:
-    - ProcessName;
-    - TargetObject.
+    - 'User'
+    - 'ParentUser'
 falsepositives:
-    - No
+    - "É necessário validar se foi realizado uma ação administrativa de conhecimento da equipe de infraestrutura"
 level: high
 ```
 
