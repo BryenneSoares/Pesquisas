@@ -11,7 +11,7 @@ A tática de persisência é uma das maneiras pelas quais os invasores podem exp
 
 Uma vez dentro do sistema, mesmo que a máquina seja reiniciada ou as chaves de acesso SSH sejam modificadas, isso pode incluir adição de entradas ao cronjob, instalação de backdoors, ou, especificamente para o nosso caso, adição de chaves SSH autorizadas.
 
-**A priori, para executar o sequestro de extensão, é importante salientar que o atacante já possua o primeiro acesso inicial à máquina alvo, com privilégios administrativos. Portando, já ter realizado a Execução e Escalação de Privilégios na vítima**.
+**A priori, para executar a manipulação de conta, é importante salientar que o atacante já possua o primeiro acesso inicial à máquina alvo, com privilégios administrativos. Portando, já ter realizado a Execução e Escalação de Privilégios na vítima**.
 
 ## Contexto
 
