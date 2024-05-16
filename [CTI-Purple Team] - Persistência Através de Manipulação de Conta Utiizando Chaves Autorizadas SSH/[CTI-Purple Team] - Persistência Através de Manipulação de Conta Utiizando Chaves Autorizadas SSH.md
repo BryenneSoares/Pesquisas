@@ -260,29 +260,30 @@ Abaixo é demonstrado a emulação do início do processo de ataque, desde a cri
 
 ## Engenharia de Detecção
 
-A detecção consiste em ativar a auditoria de segurança do *Event ID 4657*, seguindo o fluxo demonstrado na imagem abaixo.
+Para monitorar o arquivo `authorized_keys` usando Sysmon, é necessário configurar uma regra específica no Sysmon para Linux que capture eventos de criação de arquivos neste diretório específico.
 
 <p align="center">
-  <img src="Imagens/event ID 4657.png">
+  <img src="Imagens/configuração sysmon.png">
   <br>
-  Figura : Ativação do Event ID 4657
+  Figura : Configuração do Arquivo do Sysmon para Linux
 </p>
 
-Como podemos observar, o comportamento produzido pela modificação da chave de registro é bem notório, gerando um único evento encontrado no *Microsoft Security Event IDs* e um único Event do Sysmon:
-
-- [4657: A Registry Value was Modified](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventid=4657)
-- Log 13, Sysmon
+Quando uma modificação ocorre no arquivo **authorized_keys**, o Sysmon registra um evento com ID 1. Aqui está um exemplo de como esse evento pode aparecer no log:
 
 <p align="center">
-  <img src="Imagens/Event ID log de alteração.png">
+  <img src="Imagens/log do sysmon, event id 1.png">
   <br>
-  Figura : Log evidenciando a alteração da chave de registro
+  Figura : Event Id 1, do Sysmon para Linux, no Log do Elastic
 </p>
 
+O Event ID 1 do Sysmon para Linux é usado para monitorar e registrar eventos de criação de arquivos. o que inclui a criação, modificação ou sobrescrita de arquivos específicos. Quando ocorre uma modificação no arquivo `authorized_keys` em um sistema Linux, este evento pode ser crucial para a segurança, pois indica uma possível alteração nas chaves SSH autorizadas para acesso remoto.
+
+Abaixo é demonstrado a regra criada no Elastic para detecção do log de auteração do arquivo authorized_key e seus alertas gerados:
+
 <p align="center">
-  <img src="Imagens/Event ID 13, Sysmom.png">
+  <img src="Imagens/Detecção no Elastic.png">
   <br>
-  Figura : Event 13, Sysmon
+  Figura : Alertas Gerados com a Regra Criada pelo Purple Team
 </p>
 
 ## Mitigação: Desabilitar a Autenticação Sem Senha SSH
