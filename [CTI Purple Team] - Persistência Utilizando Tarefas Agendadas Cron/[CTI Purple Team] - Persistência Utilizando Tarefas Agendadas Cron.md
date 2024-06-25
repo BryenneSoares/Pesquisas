@@ -369,13 +369,13 @@ tags:
     - attack.T1053.003 # Scheduled Task/Job: Cron
 logsource:
     category: 
-    product: 'Linux'
+    product: Linux
     definition: 
 detection:
-    Process_Creation:
+    Process_Creation: 
       EventID:
         - 1
-      Process.command_line|contains|all:
+      Process_command_line|contains|all:
         - 'crontab'
     condition: Process_Creation
 fields:
