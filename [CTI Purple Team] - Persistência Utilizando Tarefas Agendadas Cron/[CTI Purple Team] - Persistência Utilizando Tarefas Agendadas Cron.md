@@ -345,9 +345,9 @@ sudo crontab -u user -e
 Contudo, se `cron.deny` existe e `user` está listado nele e não está listado em `cron.allow`, você receberá o seguinte erro após executar o comando anterior:
 
 <p align="center">
-  <img src="Imagens/>
+  <img src="Imagens/log do sysmon, event id 1.png">
   <br>
-  Figura 10:
+  Figura 9: Event Id 1, do Sysmon para Linux, no Log do Elastic
 </p>
 
 Por padrão, a maioria dos cron daemons assumirá que todos os usuários têm acesso ao cron, a menos que exista `cron.allow` ou `cron.deny`.
