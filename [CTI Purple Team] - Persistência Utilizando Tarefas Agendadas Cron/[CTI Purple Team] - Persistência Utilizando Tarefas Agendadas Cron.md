@@ -352,6 +352,7 @@ Contudo, se `cron.deny` existe e `user` está listado nele e não está listado 
 
 Por padrão, a maioria dos cron daemons assumirá que todos os usuários têm acesso ao cron, a menos que exista `cron.allow` ou `cron.deny`.
 
+
 ### Padrão SIGMA: Account Manipulation: SSH Authorized Keys
 
 ```yaml
@@ -367,7 +368,7 @@ tags:
     - attack.persistence.TA0003
     - attack.T1053.003 # Scheduled Task/Job: Cron
 logsource:
-    category: ''
+    category: 
     product: 'Linux'
     definition: 
 detection:
