@@ -356,7 +356,7 @@ Por padrão, a maioria dos cron daemons assumirá que todos os usuários têm ac
 ### Padrão SIGMA: Account Manipulation: SSH Authorized Keys
 
 ```yaml
-title: 'Linux - Persistência Utilizando Shell Reverso com Tarefas Agendadas Cron - BASELINE'
+title: 'Linux - Persistência Utilizando Tarefas Agendadas Cron - BASELINE'
 id: edc14135-1567-4366-85a9-37afb55a7e33
 status: stable
 description: 'Esta regra detecta o comportamento gerado pela criação de tarefas agendadas cron'
