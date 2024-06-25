@@ -50,7 +50,8 @@ O comando pode ser praticamente qualquer comando que você normalmente executari
 | DAY OF THE MONTH (Dia do Mês)  | Dia do mês em que o comando vai rodar, variando de `1 a 31`            |
 | MONTH (Mês)                    | Mês em que o comando será executado, variando de `1 a 12`              |
 | DAY OF THE WEEK (Dia da Semana)| Dia da semana que você quer que o comando execute, variando de `0 a 6`.|  
-|***`a semana se inicia no domingo, sendo o valor 0`***                                                     |
+
+***`info: a semana se inicia no domingo, sendo o valor 0`***
 
 </center>
 
