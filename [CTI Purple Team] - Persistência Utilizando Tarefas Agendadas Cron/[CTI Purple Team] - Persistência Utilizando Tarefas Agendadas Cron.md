@@ -292,10 +292,10 @@ A partir disso, quando o cron executar nosso script, o shell reverso será conec
 
 Como podemos observar o Cron é a forma mais tradicional de criar tarefas agendadas. Os diretórios interessantes para nós são os seguintes:
 
-- /etc/crontab
-- /etc/cron.d/*
-- /etc/cron.{hourly,daily,weekly,monthly}/*
-- /var/spool/cron/crontab/*
+- /etc/crontab/
+- /etc/cron.d/
+- /etc/cron.{hourly,daily,weekly,monthly}/
+- /var/spool/cron/
 - /etc/cron.allow
 - /etc/cron.deny
 
@@ -307,12 +307,20 @@ A partir de nossa referência do arquivo de configuração do [Auditd]() para Li
   Figura 8: Regras do Arquivo de Configuração Auditd para Linux
 </p>
 
-Quando uma modificação ocorre no arquivo **crontab**, o Sysmon registra um evento com ID 1. Aqui está um exemplo de como esse evento pode aparecer no log:
+Quando uma modificação ocorre no arquivo **/etc/crontab/**, o Auditd registra os seguintes logs:
 
 <p align="center">
-  <img src="Imagens/log do sysmon, event id 1.png">
+  <img src="Imagens/logs do crontab do sistema.png">
   <br>
-  Figura 9: Event Id 1, do Sysmon para Linux, no Log do Elastic
+  Figura 9: Logs gerados Após Modificação do Cron do Sistema
+</p>
+
+Agora quando a modificação é feita diretamente no crontab do usuário específico, utilizando o comando **crontab -e**, o Auditd registra os logs abaixo:
+
+<p align="center">
+  <img src="Imagens/logs do crontab do usuario.png">
+  <br>
+  Figura 9: Logs gerados Após Modificação do Cron do Usuário
 </p>
 
 Abaixo é demonstrado a regra criada no Elastic para detecção do log de alteração do arquivo `crontab` e seus alertas gerados:
@@ -322,36 +330,6 @@ Abaixo é demonstrado a regra criada no Elastic para detecção do log de altera
   <br>
   Figura 10: Alertas Gerados com a Regra Criada pelo Purple Team
 </p>
-
-## Mitigação: Restringindo Acesso ao Cron
-
-Você pode gerenciar quais usuários têm permissão para usar o comando crontab com os arquivos `cron.allow` e `cron.deny`, ambos armazenados no diretório `/etc/`. Se o arquivo `cron.deny` existir, qualquer usuário listado nele será impedido de editar seu arquivo crontab. Se `cron.allow` existir, apenas os usuários listados nele poderão editar seus crontabs. Se ambos os arquivos existirem e o mesmo usuário estiver listado em cada um, o arquivo `cron.allow` será substituído pelo `cron.deny` e o usuário poderá editar seus arquivos crontab.
-
-Por exemplo, para negar acesso a todos os usuários e depois conceder acesso ao usuário `teste`, você poderia usar a seguinte sequência de comandos:
-
-```zsh
-sudo echo ALL >>/etc/cron.deny
-sudo echo teste >>/etc/cron.allow
-```
-
-Primeiro, bloqueamos todos os usuários anexando `ALL` ao arquivo `cron.deny`. Então, anexando o nome de usuário ao arquivo `cron.allow`, damos ao perfil de usuário `teste` acesso para executar trabalhos cron.
-
-Observe que se um usuário tiver privilégios sudo, ele poderá editar os de outro usuário crontab com o seguinte comando:
-
-```zsh
-sudo crontab -u user -e
-```
-
-Contudo, se `cron.deny` existe e `user` está listado nele e não está listado em `cron.allow`, você receberá o seguinte erro após executar o comando anterior:
-
-<p align="center">
-  <img src="Imagens/log do sysmon, event id 1.png">
-  <br>
-  Figura 9: Event Id 1, do Sysmon para Linux, no Log do Elastic
-</p>
-
-Por padrão, a maioria dos cron daemons assumirá que todos os usuários têm acesso ao cron, a menos que exista `cron.allow` ou `cron.deny`.
-
 
 ### Padrão SIGMA: Account Manipulation: SSH Authorized Keys
 
