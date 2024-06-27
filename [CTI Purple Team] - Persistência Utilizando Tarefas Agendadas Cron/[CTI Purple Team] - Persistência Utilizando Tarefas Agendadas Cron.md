@@ -23,13 +23,13 @@ Um ***Cron Job*** é um programa Linux que permite aos usuários agendar a execu
 
 A maioria das instalações padrão do cron consiste em dois comandos: ***`cron`*** ou ***`crond`***, que é o daemon que executa o utilitário de agendamento ***`crontab`***, que é o comando que permite editar as entradas cron para seus trabalhos
 
-O Cron é um `daemon`, isso significa que ele trabalha em segundo plano para executar tarefas não-interativas. Isso significa que o programa não  aceita nenhuma entrada do usuário e não exibe a saída para o usuário. No Windows, você pode estar mais familiarizados com processos em plano de fundo com os Serviços.  O daemon cron ( crond ) procura entradas no crontab para determinar quais tarefas ele deve executar e quando deve executá-las de acordo com o agendamento especificado. 
+O Cron é um `daemon`, isso significa que ele trabalha em segundo plano, ou seja, está sempre no status ocioso, e aguarda a solicitação de um comando para executar tarefas não-interativas. Isso significa que o programa não aceita nenhuma entrada do usuário e não exibe a saída para o usuário. Essa tarefa pode ser tanto de dentro do computador principal quanto de qualquer outra máquina conectada à mesma rede. 
 
-Um daemon está sempre no status ocioso e aguarda uma solicitação de um comando para desempenhar uma certa tarefa. Essa tarefa pode ser tanto de dentro do computador principal quanto de qualquer outra máquina conectada à mesma rede.
+No Windows, você pode estar mais familiarizados com processos em plano de fundo com os Serviços.  O daemon cron (crond) procura entradas no crontab para determinar quais tarefas ele deve executar e quando deve executá-las de acordo com o agendamento especificado. 
 
 Em seu nível mais básico, um cron job é uma entrada escrita em uma tabela chamada `tabela cron`, também conhecida como `crontab`. Esta entrada contém uma programação e um comando a ser executado. O sistema padrão do arquivo contab é `/etc/crontab` e ele fica localizado dentro do diretório crontab, que é `/etc/cron.*/`. 
 
-Apenas administradores podem editar um arquivo crontab do sistema. Porém, como os sistemas operacionais Unix têm suporte a múltiplos usuários, cada um pode criar seu próprio arquivo crontab e lançar comandos para executar tarefas em qualquer hora que eles quiserem. Um daemon Cron vai verificar o arquivo e rodar o comando no plano de fundo do sistema.
+Apenas administradores podem editar um arquivo crontab do sistema. Porém, como os sistemas operacionais Unix têm suporte a múltiplos usuários, cada um pode criar seu próprio arquivo crontab e lançar comandos para executar tarefas em qualquer hora que eles quiserem.
 
 ## Etapa I: Compreendendo como funciona o Cron
 
@@ -103,24 +103,26 @@ Aqui estão mais alguns exemplos de como usar o componente de agendamento do cro
 - `0 4 * * 2-4` - Execute o comando todas as terças, quartas e quintas às 4h.
 - `20,40 */8 * 7-12 *` - Execute o comando nos 20 e 40 minutos de cada 8 horas todos os dias dos últimos 6 meses do ano.
 
-Se você achar isso confuso ou se quiser ajuda para escrever cronogramas para suas próprias cron tarefas, o [Cronitor](https://cronitor.io/) fornece um prático croneditor de expressões de cronograma chamado [“Crontab Guru”](https://crontab.guru/) que você pode usar para verificar se seus croncronogramas são válidos.
+Se você achar isso confuso ou se quiser ajuda para escrever cronogramas para suas próprias cron tarefas, o [Cronitor](https://cronitor.io/) fornece um prático editor cron de expressões de cronograma chamado [“Crontab Guru”](https://crontab.guru/) que você pode usar para verificar se seus croncronogramas são válidos.
 
-Antes de continuar, tenha em mente que a saída do comando vai automaticamente ser enviada para sua conta de email local. Então, se você quer parar de receber esses emails, você pode adicionar `>/dev/null 2>&1` à sintaxe. Como no exemplo:
+Antes de continuar, tenha em mente que a saída do comando vai automaticamente ser enviada para sua conta de email local, então, se você quer parar de receber esses emails, para fazer isso, você pode redirecionar a saída do script para um local vazio, como `>/dev/null` que imediatamente exclui quaisquer dados gravados nele, redirecionar também o erro padrão - representado por `2` - para saída padrão com `>&1`. Como a saída padrão já está sendo redirecionada para `/dev/null`, isso basicamente permite que o comando ou script seja executado silenciosamente. 
 
 ```zsh
 0 5 * * * /root/backup.sh >/dev/null 2>&1
 ``` 
 
-Além disso, se você quer receber a saída de email em uma conta específica, então você pode adicionar MAILTO, seguido do endereço de email. Aqui está um exemplo:
+Além disso, se você quer receber a saída de email em uma conta específica, você pode adicionar `MAILTO` seguido do endereço de email. Aqui está um exemplo:
 
 ```zsh
 MAILTO="username@ish.com.br"
 0 3 * * * /root/backup.sh >/dev/null 2>&1
 ``` 
 
+Mesmo que o crontab contenha uma instrução `MAILTO`, a saída do comando não será enviada para o endereço de e-mail especificado contendo o complemento `>/dev/null 2>&1`.
+
 ## Etapa II: Instalando e Habilitando o Cron
 
-Quase todas as distribuições Linux têm algum tipo de cron instalado por padrão. O daemon estará rodando sob o usuário ***root***. No entanto, se você estiver usando uma máquina Ubuntu que cron não esteja instalada, poderá instalá-la usando o APT.
+Quase todas as distribuições Linux têm algum tipo de cron instalado por padrão. O daemon estará rodando com o usuário ***root***. No entanto, se você estiver usando uma máquina Linux que o cron não esteja instalada, poderá instalá-la usando o APT.
 
 Você pode executar o seguinte comando para ver se o cron está em execução:
 
@@ -136,7 +138,7 @@ Você deverá ver uma saída como esta:
   Figura 1: Saída do Cron em Execução
 </p>
 
-Se você não recebeu nenhuma saída do comando, o cron não está em execução ou não está instalado. Antes de instalar o cron em uma máquina Ubuntu, atualize o índice de pacotes local do computador:
+Se você não recebeu nenhuma saída do comando, o cron não está em execução ou não está instalado. Antes de instalar o cron em uma máquina Linux, atualize o índice de pacotes local do computador:
 
 ```zsh
 sudo apt update
@@ -148,7 +150,7 @@ Em seguida, instale `cron` com o seguinte comando:
 sudo apt install cron
 ``` 
 
-***`Info:`*** `Se estiver usando algo diferente do Ubuntu, você precisará executar o comando equivalente para o seu gerenciador de pacotes.`
+***`Info:`*** `Se estiver usando algo diferente do Linux, você precisará executar o comando equivalente para o seu gerenciador de pacotes.`
 
 Após a instalação, você precisará certificar-se de que ele também esteja ativo e configurado para execução em segundo plano, usando o comando `systemctl` fornecido pelo systemd:
 
@@ -162,23 +164,23 @@ sudo systemctl enable cron
   Figura 2: Habilitando o Cron em Segundo Plano
 </p>
 
-Em seguida, cron estará instalado em seu sistema e pronto para você iniciar o agendamento de jobs.
+Agora, o cron estará instalado em seu sistema e pronto para você iniciar o agendamento de jobs.
 
 ## Emulação de Ameaça - Criar o Script Shell e a Cron job
 
-Como vimos anteriormente, uma tarefa agendada cron pode ser criada com qualquer script ou comando que seja executável na linha de comando. Sendo assim, depois de ter compreendido a funcionalidade e a criação dos cronjobs, nesta emulação de ataque iremos representar o agendamento de um script shell contendo comandos para executar um shell reverso na máquina do atacante a cada minuto todas as horas de todos os dias e meses, a fim de mantermos persistência, mesmo que o sitema seja atualizado ou reinicializado.
+Como vimos anteriormente, uma tarefa agendada cron pode ser criada com qualquer script ou comando que seja executável na linha de comando. Sendo assim, depois de ter compreendido a funcionalidade e a criação dos cronjobs, nesta emulação de ataque iremos representar o agendamento de um script shell simples contendo mensagens de falha, comando para executar um shell reverso na máquina do atacante a cada minuto todas as horas de todos os dias e meses, a fim de mantermos persistência, mesmo que o sitema seja atualizado ou reinicializado.
 
 ### 1. Criando Script Shell
 
-Depois de instalado e habilitado o cron, crie um script shell que contenha os comandos necessários para estabelecer a conexão de shell reverso. 
+Depois de instalado e habilitado o cron, crie um script shell que contenha os comandos necessários para estabelecer uma conexão de shell reverso. 
 
-Abra um terminal e use um editor de texto como `nano, vi, ou vim` para criar um novo arquivo de script. Por exemplo, usando o nano:
+Abra um terminal e use um editor de texto como `nano, vi, ou vim` para criar um novo arquivo de script. Por exemplo, usaremos o nano. Digite o comando seguido do nome que deseja nomear o script, no nosso cso usaremos o nome `reverseshell` como exemplo:
 
 ```zsh
 nano reverseshell.sh
 ``` 
 
-Digite o conteúdo do script no editor. Aqui está um exemplo básico que escreve uma mensagem em um arquivo de log e cria o shell reverso para nosso ataque:
+A seguir, digite o conteúdo do script no editor. Aqui está um exemplo básico que escreve uma mensagem em um arquivo de log e cria o shell reverso para nosso ataque:
 
 <p align="center">
   <img src="Imagens/script shell do shell reverso.png">
@@ -186,15 +188,13 @@ Digite o conteúdo do script no editor. Aqui está um exemplo básico que escrev
   Figura 3: Conteúdo do Script Shell para a Shell Reverso
 </p>
 
-Se você estiver usando o nano, salve e saia pressionando `Ctrl+O`, depois `Enter` para salvar e `Ctrl+X` para sair.
-
-Altere as permissões do arquivo para torná-lo executável:
+Se você estiver usando o nano, salve pressionando `Ctrl+O`, depois `Enter` e `Ctrl+X` para sair. Altere as permissões do arquivo para torná-lo executável:
 
 ```zsh
 chmod +x reverseshell.sh
 ``` 
 
-Execute o script manualmente para iniciá-lo:
+Em seguida, execute o script manualmente para iniciá-lo:
 
 ```zsh
 ./reverseshell.sh &
@@ -214,7 +214,7 @@ Agora que o script está pronto, você pode configurá-lo para ser executado a c
 
 Depois de definir um cronograma e saber o trabalho que deseja executar, você precisará colocá-lo em algum lugar onde seu daemon possa lê-lo.
 
-Conforme mencionado anteriormente, a `crontab` é um arquivo especial que contém o agendamento dos trabalhos cron que serão executados. No entanto, estes não se destinam a ser editados diretamente. Em vez disso, é recomendado que você use o comando crontab. Isso permite que você edite seu perfil de usuário crontab sem alterar seus privilégios com `sudo`. O comando `crontab` também informará se você tiver erros de sintaxe no arquivo crontab, mas editá-lo diretamente não.
+Conforme mencionado anteriormente, a `crontab` é um arquivo especial que contém o agendamento dos trabalhos cron que serão executados. No entanto, estes não se destinam a ser editados diretamente. Em vez disso, é recomendado que você use o comando de edição. Isso permite que você edite seu perfil de usuário crontab sem alterar seus privilégios com `sudo`, pois o crontab do sistema só pode ser alterado com privéligios de administrador, como o caso do nosso atacante. O comando `crontab` também informará se você tiver erros de sintaxe no arquivo crontab, mas editá-lo diretamente não.
 
 Você pode editar seu crontab com o seguinte comando:
 
@@ -230,9 +230,7 @@ Se esta for a primeira vez que você executa o comando `crontab -e` neste perfil
   Figura 5: Primeira Execução do Crontab neste Usuário
 </p>
 
-Digite o número correspondente ao editor de sua preferência. Alternativamente, você pode pressionar `ENTER` para aceitar a escolha padrão, `nano`.
-
-Depois de fazer sua seleção, você será levado a um novo crontab contendo algumas instruções comentadas sobre como usá-lo:
+Digite o número correspondente ao editor de sua preferência. Alternativamente, você pode pressionar `ENTER` para aceitar a escolha padrão, `nano`. Depois de fazer sua seleção, você será levado a um novo crontab contendo algumas instruções comentadas sobre como usá-lo:
 
 <p align="center">
   <img src="Imagens/informações do crontab.png">
@@ -242,9 +240,9 @@ Depois de fazer sua seleção, você será levado a um novo crontab contendo alg
 
 Se você quer editar um crontab de outro usuário, você pode digitar `crontab -u username -e`. Tenha em mente que você só pode fazer isso como um **superusuário**. Isso significa que você precisa digitar `sudo su` antes de digitar o comando.
 
-Quando você executar `crontab -e` no futuro, seu `crontab` editor de texto será exibido automaticamente. Uma vez no editor, você pode inserir sua programação com cada trabalho em uma nova linha. Caso contrário, você pode salvar e fechar o crontab por enquanto (`CTRL + O e ENTER` para salvar e `CTRL + X` para fechar, se tiver selecionado nano).
+Quando você executar `crontab -e` no futuro, seu `crontab` editor de texto será exibido automaticamente. Uma vez no editor, você pode inserir sua programação com cada trabalho em uma nova linha. Caso contrário, você pode salvar e fechar o crontab por enquanto (`CTRL + O` e `ENTER` para salvar e `CTRL + X` para fechar, se tiver selecionado nano).
 
-Agora vamos adicionar a seguinte linha ao crontab para executar o script shell que criamos anteriormente a cada minuto em segundo plano:
+Dito isto, vamos adicionar a seguinte linha ao crontab para executar o script shell que criamos anteriormente a cada minuto em segundo plano:
 
 ```zsh
 * * * * * reverseshell.sh >/dev/null 2>&1 &
@@ -262,7 +260,7 @@ crontab -l
   Figura 7: verificando Crontabs Criados
 </p>
 
-Verifique também o arquivo de log para garantir que o script está sendo executado conforme esperado, substitua o caminho do exemplo abaixo pelo caminho exato do log gerado quando criamos o script shell:
+Verifique também o arquivo de log para garantir que o script está sendo executado conforme esperado, substitua o caminho do exemplo abaixo pelo caminho exato do log gerado quando criamos o script shell, (`/home/kali/reverseshell.sh`):
 
 ```zsh
 tail -f /path/to/logfile.log
@@ -271,10 +269,10 @@ tail -f /path/to/logfile.log
 <p align="center">
   <img src="Imagens/logs do script shell.png">
   <br>
-  Figura 7: Virificando Arquivo de Log do Script Criado
+  Figura 8: Virificando Arquivo de Log do Script Criado
 </p>
 
-Após ter sido configurado com êxito a crontab, neste momento podemos na máquina atacante executar o listener, utilizando o NetCat, para escutar qualquer conexão atruibuída na porta TCP/6789 escolhida ppara nosso shell reverso:
+Após ter sido configurado com êxito a crontab, neste momento podemos na máquina atacante executar o listener, utilizando o NetCat, para escutar qualquer conexão atruibuída na porta TCP/6789 escolhida para nosso shell reverso:
 
 ```zsh
 nc -nvlp 6789 
@@ -285,7 +283,15 @@ A partir disso, quando o cron executar nosso script, o shell reverso será conec
 <p align="center">
   <img src="Imagens/conexão shell reverso.png">
   <br>
-  Figura 7: Obtendo a Conexão com o Shell Reverso
+  Figura 9: Obtendo a Conexão com o Shell Reverso
+</p>
+
+Abaixo é demonstrado a emulação do início do processo de ataque, desde a instalação, criação do cronjob e conexão do shell reverso:
+
+<p align="center">
+  <img src="Imagens/git da emulação de ataque.gif">
+  <br>
+  Figura 9: Demonstração do Processo de Ataque
 </p>
 
 ## Engenharia de Detecção
@@ -304,15 +310,15 @@ A partir de nossa referência do arquivo de configuração do [Auditd]() para Li
 <p align="center">
   <img src="Imagens/auditd rules.png">
   <br>
-  Figura 8: Regras do Arquivo de Configuração Auditd para Linux
+  Figura 10: Regras do Arquivo de Configuração Auditd para Linux
 </p>
 
-Quando uma modificação ocorre no arquivo **/etc/crontab/**, o Auditd registra os seguintes logs:
+Quando uma modificação ocorre no arquivo **/etc/crontab/**, o crontab do sistema, o Auditd registra os seguintes logs:
 
 <p align="center">
   <img src="Imagens/logs do crontab do sistema.png">
   <br>
-  Figura 9: Logs gerados Após Modificação do Cron do Sistema
+  Figura 11: Logs gerados Após Modificação do Cron do Sistema
 </p>
 
 Agora quando a modificação é feita diretamente no crontab do usuário específico, utilizando o comando **crontab -e**, o Auditd registra os logs abaixo:
@@ -320,7 +326,7 @@ Agora quando a modificação é feita diretamente no crontab do usuário especí
 <p align="center">
   <img src="Imagens/logs do crontab do usuario.png">
   <br>
-  Figura 9: Logs gerados Após Modificação do Cron do Usuário
+  Figura 12: Logs gerados Após Modificação do Cron do Usuário
 </p>
 
 Abaixo é demonstrado a regra criada no Elastic para detecção do log de alteração do arquivo `crontab` e seus alertas gerados:
@@ -328,7 +334,7 @@ Abaixo é demonstrado a regra criada no Elastic para detecção do log de altera
 <p align="center">
   <img src="Imagens/Regra gerando alertas.png">
   <br>
-  Figura 10: Alertas Gerados com a Regra Criada pelo Purple Team
+  Figura 13: Alertas Gerados com a Regra Criada pelo Purple Team
 </p>
 
 ### Padrão SIGMA: Account Manipulation: SSH Authorized Keys
@@ -350,11 +356,22 @@ logsource:
     product: Linux
     definition: auditd
 detection: 
-    Process_Creation: 
-
-    condition: 
+    Path_Name: 
+      path_name|contains:
+      - '/etc/cron.d/'
+      - '/etc/cron.daily/'
+      - '/etc/cron.hourly/'
+      - '/etc/cron.monthly/'
+      - '/etc/cron.weekly/'
+      - '/etc/crontab'
+    Work_Dir:
+      work_dir|contains:
+      - '/var/spool/cron'
+    condition: Path_Name OR Work_Dir
 fields:
-    -
+    - 'CWD'
+    - 'Path_Parent'
+    - 'Path_Create'
 falsepositives:
     - "É necessário validar se foi realizado uma ação administrativa de conhecimento da equipe de infraestrutura"
 level: high
