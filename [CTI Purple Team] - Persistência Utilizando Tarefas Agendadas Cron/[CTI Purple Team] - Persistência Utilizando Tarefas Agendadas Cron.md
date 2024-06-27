@@ -326,7 +326,7 @@ Agora quando a modificação é feita diretamente no crontab do usuário especí
 Abaixo é demonstrado a regra criada no Elastic para detecção do log de alteração do arquivo `crontab` e seus alertas gerados:
 
 <p align="center">
-  <img src="Imagens/Detecção no Elastic.png">
+  <img src="Imagens/Regra gerando alertas.png">
   <br>
   Figura 10: Alertas Gerados com a Regra Criada pelo Purple Team
 </p>
@@ -348,17 +348,13 @@ tags:
 logsource:
     category: 
     product: Linux
-    definition: 
-detection:
+    definition: auditd
+detection: 
     Process_Creation: 
-      EventID:
-        - 1
-      Process_command_line|contains|all:
-        - 'crontab'
-    condition: Process_Creation
+
+    condition: 
 fields:
-    - 'User'
-    - 'ParentUser'
+    -
 falsepositives:
     - "É necessário validar se foi realizado uma ação administrativa de conhecimento da equipe de infraestrutura"
 level: high
