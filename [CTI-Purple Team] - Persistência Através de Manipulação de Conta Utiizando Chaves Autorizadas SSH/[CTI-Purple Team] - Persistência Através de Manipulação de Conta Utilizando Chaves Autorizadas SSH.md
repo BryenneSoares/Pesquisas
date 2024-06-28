@@ -5,6 +5,18 @@
 
 # CTI Purple Team - Persistência Utilizando Chaves Autorizadas SSH
 
+<kbd>Pesquisador</kbd> : <span style="color:purple"> **Bryenne Bonfim**</span>
+
+<kbd>Tipo de Ameaça</kbd> : <span style="color:orange"> **Persistência**</span>
+
+<kbd>TLP</kbd> : <span style="color:red"> **RED**</span>
+
+<kbd>Nível de Impacto</kbd> : <span style="color:red"> **Crítico**</span>
+
+<kbd>Tipo de Impacto</kbd> : <span style="color:red"> **Criptografia de Dados**</span>
+
+------------
+
 Nesta pesquisa, iremos abordar a tática [TA0003](https://attack.mitre.org/tactics/TA0003/) (Persistência), dando ênfase a sub-técnica [T1098.004](https://attack.mitre.org/techniques/T1098/004/) (Account Manipulation: SSH Authorized Keys).
 
 A tática de persisência é uma das maneiras pelas quais os invasores podem explorar eventos específicos do sistema para executar código malicioso de forma persistente. Neste ataque em questão, os adversários podem mudar o `autorized_keys`, arquivo SSH no Linux para manter a persistência no host da vítima. 
@@ -257,6 +269,8 @@ Abaixo é demonstrado a emulação do início do processo de ataque, desde a cri
   <br>
   Figura 13: Demonstração do Processo de Ataque
 </p>
+
+Para ver a animação completa, clique [aqui](https://example.com/path-to-gif.gif).
 
 ## Engenharia de Detecção
 
