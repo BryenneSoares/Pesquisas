@@ -6,7 +6,7 @@
 
 $\color{black}{\textsf{Pesquisador}}$ : $\color{red}{\textsf{Bryenne Bonfim}}$
 
-$\color{black}{\textsf{Tipo de Ameaça}}$ : $\color{orange}{\textsf{RTTP}}$
+$\color{black}{\textsf{Tipo de Ameaça}}$ : $\color{orange}{\textsf{TTP}}$
 
 $\color{black}{\textsf{TLP}}$ :  $\color{red}{\textsf{RED}}$
 
