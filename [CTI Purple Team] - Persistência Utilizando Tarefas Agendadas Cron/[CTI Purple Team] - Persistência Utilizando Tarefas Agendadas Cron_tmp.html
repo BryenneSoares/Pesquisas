@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>[CTI Purple Team] - Persistência Utilizando Tarefas Agendadas Cron.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<p align="center">
+  <img src="file:///c:/Users/bryenne.bonfim/OneDrive - ISH TECNOLOGIA S A/&#xC1;rea de Trabalho/Cri-o-de-pesquisas/[CTI Purple Team] - Persist&#xEA;ncia Utilizando Tarefas Agendadas Cron/Imagens/ISHLOGO.png" alt="Logo do Purple Team" width="300" height="300">
+</p>
+<h1 id="cti-purple-team---persist%C3%AAncia-utilizando-tarefas-agendadas-cron">CTI Purple Team - Persistência Utilizando Tarefas Agendadas Cron</h1>
+<p>Nesta pesquisa, iremos abordar a tática <a href="https://attack.mitre.org/tactics/TA0003/">TA0003</a> (Persistência), dando ênfase a sub-técnica <a href="https://attack.mitre.org/techniques/T1053/003/">T1053.003</a> (Scheduled Task/Job: Cron).</p>
+<p>Assim que temos acesso a um sistema comprometido, existem algumas maneiras de aumentar sua posição no sistema para acesso de retorno futuro, também conhecido como persistência. Isso serve como um caminho de volta caso o sistema seja atualizado ou corrigido, tornando inútil o caminho de entrada original explorado.</p>
+<p>A persistência pode ser feita de várias maneiras e com vários métodos, mas hoje neste guia explicaremos como podemos aproveitar as vantagens do <strong>Cron</strong> para usar cron jobs (tarefas agendadas) para criar mais uma camada de persistência usando um backdoor programado.</p>
+<p><code>Cron</code> é um daemon de agendamento de tarefas baseado em tempo encontrado em sistemas operacionais do tipo Unix, incluindo distribuições Linux. O Cron é executado em segundo plano e as operações agendadas com cron, chamadas de “cron jobs”, são executadas automaticamente, tornando o cron útil para automatizar tarefas relacionadas à manutenção.</p>
+<p>Este guia fornece uma visão geral de como agendar tarefas usando a sintaxe especial do cron. Também aborda alguns atalhos que você pode usar para agilizar o processo de redação de cronogramas de trabalho e torná-los mais compreensíveis.</p>
+<p><strong>A priori, para executar a manipulação de conta, é importante salientar que o atacante já possua o primeiro acesso inicial à máquina alvo, com privilégios administrativos. Portando, já ter realizado a Execução e Escalação de Privilégios na vítima</strong>.</p>
+<h2 id="contexto">Contexto</h2>
+<p>Um <em><strong>Cron Job</strong></em> é um programa Linux que permite aos usuários agendar a execução de um software, geralmente na forma de um <code>script shell</code> ou de um <code>executável compilado</code>. Cron normalmente é usado quando você tem uma tarefa que precisa ser executada em um cronograma fixo e/ou para automatizar tarefas repetitivas, como download de arquivos ou envio de e-mails, backups.</p>
+<p>A maioria das instalações padrão do cron consiste em dois comandos: <em><strong><code>cron</code></strong></em> ou <em><strong><code>crond</code></strong></em>, que é o daemon que executa o utilitário de agendamento <em><strong><code>crontab</code></strong></em>, que é o comando que permite editar as entradas cron para seus trabalhos, isso significa que ele trabalha em segundo plano, ou seja, está sempre no status ocioso, e aguarda a solicitação de um comando para executar tarefas não-interativas de acordo com o agendamento especificado. Essa tarefa pode ser tanto de dentro do computador principal quanto de qualquer outra máquina conectada à mesma rede. No Windows, você pode estar mais familiarizado com processos em segundo plano com os Services.</p>
+<p>Em seu nível mais básico, um cron job é uma entrada escrita em uma tabela chamada <code>tabela cron</code>, também conhecida como <code>crontab</code>. Esta entrada contém uma programação e um comando a ser executado. O sistema padrão do arquivo contab é <code>/etc/crontab</code> e ele fica localizado dentro do diretório crontab, que é <code>/etc/cron.*/</code>.</p>
+<p>Apenas administradores podem editar um arquivo crontab do sistema. Porém, como os sistemas operacionais Unix têm suporte a múltiplos usuários, cada um pode criar seu próprio arquivo crontab e lançar comandos para executar tarefas em qualquer hora que eles quiserem.</p>
+<h2 id="etapa-i-compreendendo-como-funciona-o-cron">Etapa I: Compreendendo como funciona o Cron</h2>
+<p>Os trabalhos Cron são registrados e gerenciados em um arquivo especial conhecido como crontab. Cada perfil de usuário no sistema pode ter seu próprio crontab local onde pode agendar trabalhos, que é armazenado em <code>/var/spool/cron/crontabs/</code>.</p>
+<p>Para agendar um trabalho, abra-o <code>crontab</code> para edição e adicione uma tarefa escrita na forma de uma expressão <em><strong>cron</strong></em> . A sintaxe das expressões cron pode ser dividida em dois elementos: <code>o agendamento e o comando a ser executado</code>.</p>
+<p>O comando pode ser praticamente qualquer comando que você normalmente executaria na linha de comando. O componente de agendamento da sintaxe é dividido em 5 campos diferentes, que são escritos na seguinte ordem:</p>
+<center>
+</center><table>
+<thead>
+<tr>
+<th>Campos de Agendamento</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MINUTE (Minuto)</td>
+<td>Minuto da hora em que o comando será executado, variando de <code>0 a 59</code></td>
+</tr>
+<tr>
+<td>HOUR (Hora)</td>
+<td>Hora em que o comando será executado, variando de <code>0 a 23</code></td>
+</tr>
+<tr>
+<td>DAY OF THE MONTH (Dia do Mês)</td>
+<td>Dia do mês em que o comando vai rodar, variando de <code>1 a 31</code></td>
+</tr>
+<tr>
+<td>MONTH (Mês)</td>
+<td>Mês em que o comando será executado, variando de <code>1 a 12</code></td>
+</tr>
+<tr>
+<td>DAY OF THE WEEK (Dia da Semana)</td>
+<td>Dia da semana que você quer que o comando execute, variando de <code>0 a 6</code>.</td>
+</tr>
+</tbody>
+</table>
+<p><em><strong><code>info: a semana se inicia no domingo, sendo o valor 0</code></strong></em></p>
+
+<p>Juntas, as tarefas agendadas em um crontab são estruturadas da seguinte forma:</p>
+<p><code>minute</code> <code>hour</code> <code>day_of_month</code> <code>month</code> <code>day_of_week</code> <code>command_to_run</code></p>
+<p>Aqui está um exemplo funcional de uma expressão cron. Esta expressão executa o comando <code>curl http://www.google.com</code> toda terça-feira às 17h30:</p>
+<pre class="hljs"><code><div>30 17 * * 2 curl http://www.google.com
+</div></code></pre>
+<pre class="hljs"><code><div>30   17   *    *    2    curl http://www.google.com
+|    |    |    |    |            |
+|    |    |    |    |    Command or Script to execute
+|    |    |    |    |
+|    |    |    | Day of the week(0-6 | Sun-Sat)
+|    |    |    |
+|    |    |  Month(1-12)
+|    |    |
+|    |  Day of Month(1-31)
+|    |
+|   Hour(0-23)
+|
+Min(0-59)
+</div></code></pre>
+<p>Existem também alguns caracteres especiais que você pode incluir no componente de agendamento de uma expressão cron para agilizar tarefas de agendamento:</p>
+<ul>
+<li><strong>Asterisco</strong> <code>(*)</code>: Em expressões cron, um asterisco é uma variável curinga que representa <strong>“todos”</strong>.
+<ul>
+<li><strong>Ex:</strong> Uma tarefa agendada com <code>* * * * * ...</code> será executada a cada minuto de cada hora de cada dia de cada mês.</li>
+</ul>
+</li>
+<li><strong>Vígula</strong> <code>(,)</code>: As vírgulas separam os valores de agendamento para formar uma lista.
+<ul>
+<li><strong>Ex:</strong> Se você quiser que uma tarefa seja executada no início e no meio de cada hora, em vez de escrever duas tarefas separadas (por exemplo, <code>0 * * * * ...</code> e <code>30 * * * * ...</code>), você poderá obter a mesma funcionalidade com uma (<code>0,30 * * * * ...</code>).</li>
+</ul>
+</li>
+<li><strong>Hífen</strong> <code>(-)</code>: Um hífen representa um intervalo de valores no campo de agendamento.
+<ul>
+<li><strong>Ex:</strong> Em vez de ter 30 tarefas agendadas separadas para um comando que você deseja executar nos primeiros 30 minutos de cada hora (como em <code>0 * * * * ...</code>, <code>1 * * * * ...</code>, <code>2 * * * * ...</code> e assim por diante), você pode agendá-lo como <code>0-29 * * * * ...</code>.</li>
+</ul>
+</li>
+<li><strong>Barra inclinada</strong> <code>(/)</code>: Pode-se usar uma barra com um asterisco para expressar um valor de etapa.
+<ul>
+<li><strong>Ex:</strong> Em vez de escrever oito tarefas cron separadas para executar um comando a cada três horas (como em, <code>0 0 * * * ...</code>, <code>0 3 * * * ...</code>, <code>0 6 * * * ...</code> e assim por diante), você pode agendá-lo para ser executado assim: <code>0 */3 * * * ...</code>.</li>
+</ul>
+</li>
+</ul>
+<p>Aqui estão mais alguns exemplos de como usar o componente de agendamento do cron:</p>
+<ul>
+<li><code>* * * * *</code> - Execute o comando a cada minuto.</li>
+<li><code>12 * * * *</code> - Execute o comando 12 minutos após cada hora.</li>
+<li><code>0,15,30,45 * * * *</code> - Execute o comando a cada 15 minutos.</li>
+<li><code>*/15 * * * *</code> - Execute o comando a cada 15 minutos.</li>
+<li><code>0 4 * * *</code> - Execute o comando todos os dias às 4h.</li>
+<li><code>0 4 * * 2-4</code> - Execute o comando todas as terças, quartas e quintas às 4h.</li>
+<li><code>20,40 */8 * 7-12 *</code> - Execute o comando nos 20 e 40 minutos de cada 8 horas todos os dias dos últimos 6 meses do ano.</li>
+</ul>
+<p>Se você achar isso confuso ou se quiser ajuda para escrever cronogramas para suas próprias cron tarefas, o <a href="https://cronitor.io/">Cronitor</a> fornece um prático editor cron de expressões de cronograma chamado <a href="https://crontab.guru/">“Crontab Guru”</a> que você pode usar para verificar se seus croncronogramas são válidos.</p>
+<p>Antes de continuar, tenha em mente que a saída do comando vai automaticamente ser enviada para sua conta de email local, então, se você quer parar de receber esses emails, para fazer isso, você pode redirecionar a saída do script para um local vazio, como <code>&gt;/dev/null</code> que imediatamente exclui quaisquer dados gravados nele, redirecionar também o erro padrão - representado por <code>2</code> - para saída padrão com <code>&gt;&amp;1</code>. Como a saída padrão já está sendo redirecionada para <code>/dev/null</code>, isso basicamente permite que o comando ou script seja executado silenciosamente.</p>
+<pre class="hljs"><code><div>0 5 * * * /root/backup.sh &gt;/dev/null 2&gt;&amp;1
+</div></code></pre>
+<p>Além disso, se você quer receber a saída de email em uma conta específica, você pode adicionar <code>MAILTO</code> seguido do endereço de email. Aqui está um exemplo:</p>
+<pre class="hljs"><code><div>MAILTO=<span class="hljs-string">"username@ish.com.br"</span>
+0 3 * * * /root/backup.sh &gt;/dev/null 2&gt;&amp;1
+</div></code></pre>
+<p>Mesmo que o crontab contenha uma instrução <code>MAILTO</code>, a saída do comando não será enviada para o endereço de e-mail especificado contendo o complemento <code>&gt;/dev/null 2&gt;&amp;1</code>.</p>
+<h2 id="etapa-ii-instalando-e-habilitando-o-cron">Etapa II: Instalando e Habilitando o Cron</h2>
+<p>Quase todas as distribuições Linux têm algum tipo de cron instalado por padrão. O daemon estará rodando com o usuário <em><strong>root</strong></em>. No entanto, se você estiver usando uma máquina Linux que o cron não esteja instalada, poderá instalá-la usando o APT.</p>
+<p>Você pode executar o seguinte comando para ver se o cron está em execução:</p>
+<pre class="hljs"><code><div>ps aux | grep cron
+</div></code></pre>
+<p>Você deverá ver uma saída como esta:</p>
+<p align="center">
+  <img src="file:///c:/Users/bryenne.bonfim/OneDrive - ISH TECNOLOGIA S A/&#xC1;rea de Trabalho/Cri-o-de-pesquisas/[CTI Purple Team] - Persist&#xEA;ncia Utilizando Tarefas Agendadas Cron/Imagens/cron em execu&#xE7;&#xE3;o.png">
+  <br>
+  Figura 1: Sa&#xED;da do Cron em Execu&#xE7;&#xE3;o
+</p>
+<p>Se você não recebeu nenhuma saída do comando, o cron não está em execução ou não está instalado. Antes de instalar o cron em uma máquina Linux, atualize o índice de pacotes local do computador:</p>
+<pre class="hljs"><code><div>sudo apt update
+</div></code></pre>
+<p>Em seguida, instale <code>cron</code> com o seguinte comando:</p>
+<pre class="hljs"><code><div>sudo apt install cron
+</div></code></pre>
+<p><em><strong><code>Info:</code></strong></em> <code>Se estiver usando algo diferente do Linux, você precisará executar o comando equivalente para o seu gerenciador de pacotes.</code></p>
+<p>Após a instalação, você precisará certificar-se de que ele também esteja ativo e configurado para execução em segundo plano, usando o comando <code>systemctl</code> fornecido pelo systemd:</p>
+<pre class="hljs"><code><div>sudo systemctl <span class="hljs-built_in">enable</span> cron
+</div></code></pre>
+<p align="center">
+  <img src="file:///c:/Users/bryenne.bonfim/OneDrive - ISH TECNOLOGIA S A/&#xC1;rea de Trabalho/Cri-o-de-pesquisas/[CTI Purple Team] - Persist&#xEA;ncia Utilizando Tarefas Agendadas Cron/Imagens/habilitando cron em segundo plano.png">
+  <br>
+  Figura 2: Habilitando o Cron em Segundo Plano
+</p>
+<p>Agora, o cron estará instalado em seu sistema e pronto para você iniciar o agendamento de jobs.</p>
+<h2 id="emula%C3%A7%C3%A3o-de-amea%C3%A7a---criar-o-script-shell-e-a-cron-job">Emulação de Ameaça - Criar o Script Shell e a Cron job</h2>
+<p>Como vimos anteriormente, uma tarefa agendada cron pode ser criada com qualquer script ou comando que seja executável na linha de comando. Sendo assim, depois de ter compreendido a funcionalidade e a criação dos cronjobs, nesta emulação de ataque iremos representar o agendamento de um script shell simples contendo mensagens de falha, comando para executar um shell reverso na máquina do atacante a cada minuto todas as horas de todos os dias e meses, a fim de mantermos persistência, mesmo que o sitema seja atualizado ou reinicializado.</p>
+<h3 id="1-criando-script-shell">1. Criando Script Shell</h3>
+<p>Depois de instalado e habilitado o cron, crie um script shell que contenha os comandos necessários para estabelecer uma conexão de shell reverso.</p>
+<p>Abra um terminal e use um editor de texto como <code>nano, vi, ou vim</code> para criar um novo arquivo de script. Por exemplo, usaremos o nano. Digite o comando seguido do nome que deseja nomear o script, no nosso cso usaremos o nome <code>reverseshell</code> como exemplo:</p>
+<pre class="hljs"><code><div>nano reverseshell.sh
+</div></code></pre>
+<p>A seguir, digite o conteúdo do script no editor. Aqui está um exemplo básico que escreve uma mensagem em um arquivo de log e cria o shell reverso para nosso ataque:</p>
+<p align="center">
+  <img src="file:///c:/Users/bryenne.bonfim/OneDrive - ISH TECNOLOGIA S A/&#xC1;rea de Trabalho/Cri-o-de-pesquisas/[CTI Purple Team] - Persist&#xEA;ncia Utilizando Tarefas Agendadas Cron/Imagens/script shell do shell reverso.png">
+  <br>
+  Figura 3: Conte&#xFA;do do Script Shell para a Shell Reverso
+</p>
+<p>Se você estiver usando o nano, salve pressionando <code>Ctrl+O</code>, depois <code>Enter</code> e <code>Ctrl+X</code> para sair. Altere as permissões do arquivo para torná-lo executável:</p>
+<pre class="hljs"><code><div>chmod +x reverseshell.sh
+</div></code></pre>
+<p>Em seguida, execute o script manualmente para iniciá-lo:</p>
+<pre class="hljs"><code><div>./reverseshell.sh &amp;
+</div></code></pre>
+<p>Você deve ver algo como:</p>
+<p align="center">
+  <img src="file:///c:/Users/bryenne.bonfim/OneDrive - ISH TECNOLOGIA S A/&#xC1;rea de Trabalho/Cri-o-de-pesquisas/[CTI Purple Team] - Persist&#xEA;ncia Utilizando Tarefas Agendadas Cron/Imagens/executando script manualmente.png">
+  <br>
+  Figura 4: Executando Script Shell Manualmente
+</p>
+<p>Agora que o script está pronto, você pode configurá-lo para ser executado a cada minuto usando o cron.</p>
+<h3 id="2-criando-cron-job">2. Criando Cron job</h3>
+<p>Depois de definir um cronograma e saber o trabalho que deseja executar, você precisará colocá-lo em algum lugar onde seu daemon possa lê-lo.</p>
+<p>Conforme mencionado anteriormente, a <code>crontab</code> é um arquivo especial que contém o agendamento dos trabalhos cron que serão executados. No entanto, estes não se destinam a ser editados diretamente. Em vez disso, é recomendado que você use o comando de edição. Isso permite que você edite seu perfil de usuário crontab sem alterar seus privilégios com <code>sudo</code>, pois o crontab do sistema só pode ser alterado com privéligios de administrador, como o caso do nosso atacante. O comando <code>crontab</code> também informará se você tiver erros de sintaxe no arquivo crontab, mas editá-lo diretamente não.</p>
+<p>Você pode editar seu crontab com o seguinte comando:</p>
+<pre class="hljs"><code><div>crontab -e
+</div></code></pre>
+<p>Se esta for a primeira vez que você executa o comando <code>crontab -e</code> neste perfil de usuário, ele solicitará que você selecione um editor de texto padrão para usar ao editar seu arquivo crontab:</p>
+<p align="center">
+  <img src="file:///c:/Users/bryenne.bonfim/OneDrive - ISH TECNOLOGIA S A/&#xC1;rea de Trabalho/Cri-o-de-pesquisas/[CTI Purple Team] - Persist&#xEA;ncia Utilizando Tarefas Agendadas Cron/Imagens/primeira execu&#xE7;&#xE3;o  crontab.png">
+  <br>
+  Figura 5: Primeira Execu&#xE7;&#xE3;o do Crontab neste Usu&#xE1;rio
+</p>
+<p>Digite o número correspondente ao editor de sua preferência. Alternativamente, você pode pressionar <code>ENTER</code> para aceitar a escolha padrão, <code>nano</code>. Depois de fazer sua seleção, você será levado a um novo crontab contendo algumas instruções comentadas sobre como usá-lo:</p>
+<p align="center">
+  <img src="file:///c:/Users/bryenne.bonfim/OneDrive - ISH TECNOLOGIA S A/&#xC1;rea de Trabalho/Cri-o-de-pesquisas/[CTI Purple Team] - Persist&#xEA;ncia Utilizando Tarefas Agendadas Cron/Imagens/informa&#xE7;&#xF5;es do crontab.png">
+  <br>
+  Figura 6: Instru&#xE7;&#xF5;es Comentadas do Crontab
+</p>
+<p>Se você quer editar um crontab de outro usuário, você pode digitar <code>crontab -u username -e</code>. Tenha em mente que você só pode fazer isso como um <strong>superusuário</strong>. Isso significa que você precisa digitar <code>sudo su</code> antes de digitar o comando.</p>
+<p>Quando você executar <code>crontab -e</code> no futuro, seu <code>crontab</code> editor de texto será exibido automaticamente. Uma vez no editor, você pode inserir sua programação com cada trabalho em uma nova linha. Caso contrário, você pode salvar e fechar o crontab por enquanto (<code>CTRL + O</code> e <code>ENTER</code> para salvar e <code>CTRL + X</code> para fechar, se tiver selecionado nano).</p>
+<p>Dito isto, vamos adicionar a seguinte linha ao crontab para executar o script shell que criamos anteriormente a cada minuto em segundo plano:</p>
+<pre class="hljs"><code><div>* * * * * reverseshell.sh &gt;/dev/null 2&gt;&amp;1 &amp;
+</div></code></pre>
+<p>Para verificar se o cron job foi adicionado corretamente, mas não modificá-lo, pode-se usar o comando abaixo:</p>
+<pre class="hljs"><code><div>crontab -l
+</div></code></pre>
+<p align="center">
+  <img src="file:///c:/Users/bryenne.bonfim/OneDrive - ISH TECNOLOGIA S A/&#xC1;rea de Trabalho/Cri-o-de-pesquisas/[CTI Purple Team] - Persist&#xEA;ncia Utilizando Tarefas Agendadas Cron/Imagens/lista de agendamentos cron.png">
+  <br>
+  Figura 7: verificando Crontabs Criados
+</p>
+<p>Verifique também o arquivo de log para garantir que o script está sendo executado conforme esperado, substitua o caminho do exemplo abaixo pelo caminho exato do log gerado quando criamos o script shell, (<code>/home/kali/reverseshell.sh</code>):</p>
+<pre class="hljs"><code><div>tail -f /path/to/logfile.log
+</div></code></pre>
+<p align="center">
+  <img src="file:///c:/Users/bryenne.bonfim/OneDrive - ISH TECNOLOGIA S A/&#xC1;rea de Trabalho/Cri-o-de-pesquisas/[CTI Purple Team] - Persist&#xEA;ncia Utilizando Tarefas Agendadas Cron/Imagens/logs do script shell.png">
+  <br>
+  Figura 8: Virificando Arquivo de Log do Script Criado
+</p>
+<p>Após ter sido configurado com êxito a crontab, neste momento podemos na máquina atacante executar o listener, utilizando o NetCat, para escutar qualquer conexão atruibuída na porta TCP/6789 escolhida para nosso shell reverso:</p>
+<pre class="hljs"><code><div>nc -nvlp 6789 
+</div></code></pre>
+<p>A partir disso, quando o cron executar nosso script, o shell reverso será conectado automaticamente na porta em escuta na máquina atacante:</p>
+<p align="center">
+  <img src="file:///c:/Users/bryenne.bonfim/OneDrive - ISH TECNOLOGIA S A/&#xC1;rea de Trabalho/Cri-o-de-pesquisas/[CTI Purple Team] - Persist&#xEA;ncia Utilizando Tarefas Agendadas Cron/Imagens/conex&#xE3;o shell reverso.png">
+  <br>
+  Figura 9: Obtendo a Conex&#xE3;o com o Shell Reverso
+</p>
+<p>Abaixo é demonstrado a emulação do início do processo de ataque, desde a instalação, criação do cronjob e conexão do shell reverso:</p>
+<p align="center">
+  <img src="file:///c:/Users/bryenne.bonfim/OneDrive - ISH TECNOLOGIA S A/&#xC1;rea de Trabalho/Cri-o-de-pesquisas/[CTI Purple Team] - Persist&#xEA;ncia Utilizando Tarefas Agendadas Cron/Imagens/git da emula&#xE7;&#xE3;o de ataque.gif">
+  <br>
+  Figura 9: Demonstra&#xE7;&#xE3;o do Processo de Ataque
+</p>
+<h2 id="engenharia-de-detec%C3%A7%C3%A3o">Engenharia de Detecção</h2>
+<p>Como podemos observar o Cron é a forma mais tradicional de criar tarefas agendadas. Os diretórios interessantes para nós são os seguintes:</p>
+<ul>
+<li>/etc/crontab/</li>
+<li>/etc/cron.d/</li>
+<li>/etc/cron.{hourly,daily,weekly,monthly}/</li>
+<li>/var/spool/cron/</li>
+<li>/etc/cron.allow</li>
+<li>/etc/cron.deny</li>
+</ul>
+<p>A partir de nossa referência do arquivo de configuração do <a href="">Auditd</a> para Linux, o documento nos fornecem as seguintes regras para monitorar logs do Cron:</p>
+<p align="center">
+  <img src="file:///c:/Users/bryenne.bonfim/OneDrive - ISH TECNOLOGIA S A/&#xC1;rea de Trabalho/Cri-o-de-pesquisas/[CTI Purple Team] - Persist&#xEA;ncia Utilizando Tarefas Agendadas Cron/Imagens/auditd rules.png">
+  <br>
+  Figura 10: Regras do Arquivo de Configura&#xE7;&#xE3;o Auditd para Linux
+</p>
+<p>Quando uma modificação ocorre no arquivo <strong>/etc/crontab/</strong>, o crontab do sistema, o Auditd registra os seguintes logs:</p>
+<p align="center">
+  <img src="file:///c:/Users/bryenne.bonfim/OneDrive - ISH TECNOLOGIA S A/&#xC1;rea de Trabalho/Cri-o-de-pesquisas/[CTI Purple Team] - Persist&#xEA;ncia Utilizando Tarefas Agendadas Cron/Imagens/logs do crontab do sistema.png">
+  <br>
+  Figura 11: Logs gerados Ap&#xF3;s Modifica&#xE7;&#xE3;o do Cron do Sistema
+</p>
+<p>Agora quando a modificação é feita diretamente no crontab do usuário específico, utilizando o comando <strong>crontab -e</strong>, o Auditd registra os logs abaixo:</p>
+<p align="center">
+  <img src="file:///c:/Users/bryenne.bonfim/OneDrive - ISH TECNOLOGIA S A/&#xC1;rea de Trabalho/Cri-o-de-pesquisas/[CTI Purple Team] - Persist&#xEA;ncia Utilizando Tarefas Agendadas Cron/Imagens/logs do crontab do usuario.png">
+  <br>
+  Figura 12: Logs gerados Ap&#xF3;s Modifica&#xE7;&#xE3;o do Cron do Usu&#xE1;rio
+</p>
+<p>Abaixo é demonstrado a regra criada no Elastic para detecção do log de alteração do arquivo <code>crontab</code> e seus alertas gerados:</p>
+<p align="center">
+  <img src="file:///c:/Users/bryenne.bonfim/OneDrive - ISH TECNOLOGIA S A/&#xC1;rea de Trabalho/Cri-o-de-pesquisas/[CTI Purple Team] - Persist&#xEA;ncia Utilizando Tarefas Agendadas Cron/Imagens/Regra gerando alertas.png">
+  <br>
+  Figura 13: Alertas Gerados com a Regra Criada pelo Purple Team
+</p>
+<h3 id="padr%C3%A3o-sigma-account-manipulation-ssh-authorized-keys">Padrão SIGMA: Account Manipulation: SSH Authorized Keys</h3>
+<pre class="hljs"><code><div><span class="hljs-attr">title:</span> <span class="hljs-string">'Linux - Persistência Utilizando Tarefas Agendadas Cron - BASELINE'</span>
+<span class="hljs-attr">id:</span> <span class="hljs-string">edc14135-1567-4366-85a9-37afb55a7e33</span>
+<span class="hljs-attr">status:</span> <span class="hljs-string">stable</span>
+<span class="hljs-attr">description:</span> <span class="hljs-string">'Esta regra detecta o comportamento gerado pela criação de tarefas agendadas cron'</span>
+<span class="hljs-attr">references:</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">'https://attack.mitre.org/techniques/T1053/003/'</span>
+<span class="hljs-attr">author:</span> <span class="hljs-string">CTI</span> <span class="hljs-string">Purple</span> <span class="hljs-string">Team</span> <span class="hljs-bullet">-</span> <span class="hljs-string">Bryenne</span> <span class="hljs-string">Soares</span>
+<span class="hljs-attr">date:</span> <span class="hljs-number">28</span><span class="hljs-string">/06/2024</span>
+<span class="hljs-attr">tags:</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">attack.persistence.TA0003</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">attack.T1053.003</span> <span class="hljs-comment"># Scheduled Task/Job: Cron</span>
+<span class="hljs-attr">logsource:</span>
+    <span class="hljs-attr">category:</span> 
+    <span class="hljs-attr">product:</span> <span class="hljs-string">Linux</span>
+    <span class="hljs-attr">definition:</span> <span class="hljs-string">auditd</span>
+<span class="hljs-attr">detection:</span> 
+    <span class="hljs-attr">Path_Name:</span> 
+      <span class="hljs-string">path_name|contains:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">'/etc/cron.d/'</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">'/etc/cron.daily/'</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">'/etc/cron.hourly/'</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">'/etc/cron.monthly/'</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">'/etc/cron.weekly/'</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">'/etc/crontab'</span>
+    <span class="hljs-attr">Work_Dir:</span>
+      <span class="hljs-string">work_dir|contains:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">'/var/spool/cron'</span>
+    <span class="hljs-attr">condition:</span> <span class="hljs-string">Path_Name</span> <span class="hljs-string">OR</span> <span class="hljs-string">Work_Dir</span>
+<span class="hljs-attr">fields:</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">'CWD'</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">'Path_Parent'</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">'Path_Create'</span>
+<span class="hljs-attr">falsepositives:</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">"É necessário validar se foi realizado uma ação administrativa de conhecimento da equipe de infraestrutura"</span>
+<span class="hljs-attr">level:</span> <span class="hljs-string">high</span>
+</div></code></pre>
+<h2 id="conclus%C3%A3o">Conclusão</h2>
+<p>Esperamos que você que leu ou assistiu o Webinar, possa ter compreendido a inteligência que trouxemos nesta pesquisa. Qualquer dúvida, é só nos contactar.</p>
+<h2 id="link-do-webinar">Link do Webinar</h2>
+<p>Caso você não pode participar do Webinar de apresentação da pesquisa, ou gostaria rever, basta clicar neste <a href="">link</a></p>
+
+</body>
+</html>

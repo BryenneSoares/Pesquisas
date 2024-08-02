@@ -348,7 +348,7 @@ tags:
     - attack.persistence.TA0003
     - attack.T1053.003 # Scheduled Task/Job: Cron
 logsource:
-    category: 
+    category: process_creation
     product: Linux
     definition: auditd
 detection: 

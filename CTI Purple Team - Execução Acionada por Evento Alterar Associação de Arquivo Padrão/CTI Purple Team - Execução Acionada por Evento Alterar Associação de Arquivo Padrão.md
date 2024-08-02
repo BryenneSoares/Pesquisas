@@ -218,3 +218,35 @@ Esperamos que você que leu ou assistiu o Webinar, possa ter compreendido a inte
 ## Link do Webinar
 
 Caso você não pode participar do Webinar de apresentação da pesquisa, ou gostaria rever, basta clicar neste [link](https://ishtecnologia.sharepoint.com/:v:/s/CTI-PurpleTeam/Ec4VyYNxFWtHlKHst_JMY5oBxP0OOPMKydRHO1BqWFiNpQ?e=D94s2B&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D).
+
+
+
+Query elastic:
+
+CRIAÇÃO DE WEB SHELL
+
+auditd.summary.actor.primary "kali" 
+auditd.summary.object.primary "/var/www/html" or
+process.title "nano /var/www/html/phpshell.php"
+
+EXECUÇÃO DE COMANDOS
+
+auditd.suammry.actor.secondary "www-data"
+auditd.summary.object.primary "/us/bin/ls" 
+tags = "detect_execve_www", "susp_shell"
+process.args "sh, -c, --, whoami" 
+
+(auditd.summary.actor.primary: "kali" and auditd.summary.object.primary: "/var/www/html") or (process.name: "nano /var/www/html/phpshell.php") or (auditd.summary.actor.secondary: "www-data" and auditd.summary.object.primary: "/usr/bin/" and tags: ("detect_execve_www" and "www_changes" and "webshell_watch" and "command_exec")) or (process.args: "sh, -c, --, whoami, ls, cat")
+
+TOMCAT - CRIAÇÃO DE WEB SHELL
+
+auditd.summary.actor.primary "kali" 
+auditd.summary.object.primary: "/opt/tomcat/webapps/ROOT/tcshell.jsp"
+auditd.summary.how: "/usr/bin/nano"
+tags: "webshell_watch"
+
+EXECUÇÃO DE COMANDO
+
+auditd.summary.actor.secondary: "tomcat"
+auditd.summary.object.primary: "/usr/sbin/whoami"
+tags: "command_exec"

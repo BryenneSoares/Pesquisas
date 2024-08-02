@@ -1,0 +1,45 @@
+<p align="center">
+  <img src="./Imagens/ISHLOGO.png" alt="Logo do Purple Team" width="300" height="300">
+</p>
+
+<kbd>Pesquisador</kbd> : <span style="color:purple"> **Bryenne Bonfim**</span>
+
+<kbd>Tipo de Ameaça</kbd> : <span style="color:orange"> **Ransomware**</span>
+
+<kbd>TLP</kbd> : <span style="color:red"> **RED**</span>
+
+<kbd>Nível de Impacto</kbd> : <span style="color:red"> **Crítico**</span>
+
+<kbd>Tipo de Impacto</kbd> : <span style="color:red"> **Criptografia de Dados**</span>
+
+-----------
+
+# CTI Purple Team - Interceptação de Caminho pela Variável de Ambiente PATH
+## Contexto
+
+
+
+## Emulação de Ameaça
+## Engenharia de Detecção
+## Caçando Indicadores de Comprometimento 
+
+Para identificar os indicadores de comprometimento de uma possível infecção do *DoNex* antes da implementação de nossa regra de detecção no SIEM, é importante caçar os comportamentos descritos com detalhes acima e sumarizados abaixo:
+
+- Exclusão dos **Volume Shadows**, por meio dos binários *vssadmin* e do *wmic* [<span style="color:red"> ***Ransomware IOC***</span>].
+  - Event ID : **1** ou **4688** (com linhas de comando configuradas)
+    - Linha de Comando do **WMIC** [<span style="color:red"> **IOC**</span>] : `cmd /c \"wmic shadowcopy delete /nointeractive"`
+    - Linha de Comando do **VSSADMIN** [<span style="color:red"> **IOC**</span>] : `cmd /c \"vssadmin Delete Shadows /All /Quiet\"`
+- Nesta versão atual do DoNex, ele utiliza um script `.bat` para executar as ações abaixo. **Mas a sua presença, não é uma obrigatoriedade**, porém, vale a atenção na identificação de um script `.bat` que irá desencadear as ações abaixo.
+- Finalização forçada de diversos processos, por meio do binário *taskkill*. Abaixo, segue o exemplo de um indicador de comprometimento. `É importante salientar, que qualquer processo possa ser alvo desta técnica, portanto, o importante é a identificação da utilização do taskkill e as flags indicadas abaixo`.
+  - Event ID : **1** ou **4688** (com linhas de comando configuradas)
+    - Linha de Comando do **TASKKILL** [<span style="color:red"> **IOC**</span>] : `taskkill  /f /im sql* `
+- Alteração de Chaves de Registro para forçar a alteração do ícone padrão [<span style="color:red"> ***Ransomware IOC***</span>].
+  - Event ID : **13** ou **4657** (modificação de chaves de registro).
+  - *Chave de Registro* modificada termina com: `*\DefaultIcon\(Default)`
+- Desligamento do Dispositivo utilizando o binário *shutdown*.Este indicador, pode estar sendo executado de maneira concatenada com outros comandos, inclusive com a execução do script `.bat`.
+  - Event ID : **1** ou **4688** (com linhas de comando configuradas)
+  - Linha de Comando: `shutdown -r -f -t 0`
+
+----------------
+
+### Padrão SIGMA:
